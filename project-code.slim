@@ -6,6 +6,77 @@
 // git commit -m "meaningful message"
 // git push
 
-intialize{
-    
+ //SLiM model of evolutionary Rescue
+initialize() {
+    initializeSLiMModelType("nonWF");
+    defineConstant("K", 1000); // carrying capacity for the wild population
+    defineConstant("opt1", 0.0); // phenotypic optimum 
+    defineConstant("opt2", 10.0);
+    defineConstant("Tdelta", 5000);
+    initializeMutationType("m1", 0.5, "n", 0.0, 1.0); // QLT
+    initializeGenomicElementType("g1", m1, 1.0);
+    initializeGenomicElement(g1, 0, 99999);
+    initializeMutationRate(1e-7);
+    initializeRecombinationRate(5e-8);
+    defineConstant("buttton", button);
+    // defineConstant("m_12", 1e-4); // migration rate from subpop 1 to subpop 2
+    // defineConstant("m_21", 1e-4); // migration rate from subpop 2 to subpop 1
+    defineConstant("N1", 1000); // size of subpop1; wild Georgia Population 
+    defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
+    defineConstant("N3", 0) // size of subpop3: Re-introduced population
 }
+   
+1 { 
+    sim.addSubpop("p1", N1);
+    sim.addSubpop("p2", N2);
+    sim.addSubpop("p3", N3);
+}   
+
+// TO DO LIST::
+//
+// Add in something cool about survivability over time (age classes)
+// Kill snakes in the first year look into the acclimation effect from Folt et al. (2019)
+// Kill GA population
+// 
+
+// Variables we will manipulate::
+//
+// sex ratio of introduced snakes
+// Total release number
+// Rate of release
+// Number of source populations 
+// Duration of release
+
+// Variables to track::
+// Fitness
+// Genetic Diversity
+// Population size
+// Extinction (How often does it happen and when)
+// 
+//
+
+
+
+
+//
+// think about output to track for the wild subpopulation
+// fitness, genotypes,
+ 
+1:5000 {
+    if ((sim.generation - 1) % 100 == 0 {
+
+    } )
+}
+
+// think about how to do the age structures
+
+// set up the OCIC breeding colony
+// 5001 {
+
+// }
+
+
+// // Set up the re-introduced population
+// 5011:5021 {
+// // 30 snakes per year, .50 sex ratio eventually 
+// }
