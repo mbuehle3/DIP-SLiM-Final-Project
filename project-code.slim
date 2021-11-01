@@ -18,14 +18,16 @@ initialize() {
     initializeGenomicElement(g1, 0, 99999);
     initializeMutationRate(1e-7);
     initializeRecombinationRate(5e-8);
+    initializeSex("X");
     defineConstant("buttton", button);
     // defineConstant("m_12", 1e-4); // migration rate from subpop 1 to subpop 2
     // defineConstant("m_21", 1e-4); // migration rate from subpop 2 to subpop 1
     defineConstant("N1", 1000); // size of subpop1; wild Georgia Population 
     defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
-    defineConstant("N3", 0) // size of subpop3: Re-introduced population
-    defineConstant("Opt1", 5) // Phenotypic optimum
-    defineConstant("0pt2", -5) // Phenotypic optimum of the re-introduced population
+    defineConstant("N3", 0); // size of subpop3: Re-introduced population
+    defineConstant("Opt1", 5); // Phenotypic optimum
+    defineConstant("0pt2", -5); // Phenotypic optimum of the re-introduced population
+
 }
    
 1 { 
@@ -82,14 +84,13 @@ initialize() {
 // -> survival_rate = rbinom(1, 1 , 0.8) where 1 = survival and 0 = death
 5000 {
         sim.addSubpop("p2", N2);
-
 }
 5001:5011 {
 
 
 }
 
-5011 {
+5010 {
     sim.addSubpop("p3", N3);
 }
 
@@ -97,8 +98,9 @@ initialize() {
 // // Set up the re-introduced population
 fitness(m2) { return 1.0; }
 
-5011:5041 {
-1 { sim.addSubpop("p1", 500); }
+5011:5500 {
+// need to set up the migration block to pull 30 individuals from the OCIC population
+
 5011: late() {
 inds = sim.subpopulations.individuals;
 phenotypes = inds.sumOfMutationsOfType(m2);
