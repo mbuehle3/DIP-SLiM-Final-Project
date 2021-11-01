@@ -13,7 +13,8 @@ initialize() {
     defineConstant("opt1", 0.0); // phenotypic optimum 
     defineConstant("opt2", 10.0);
     defineConstant("Tdelta", 5000);
-    initializeMutationType("m1", 0.5, "n", 0.0, 1.0); // QTL -> Draws its select coef from norm distrib. w/ mean 0.0 and std dev 1.0
+    // m1 QTL -> Draws its select coef from norm distrib. w/ mean 0.0 and std dev 1.0
+    initializeMutationType("m1", 0.5, "n", 0.0, 1.0); 
     m1.convertToSubstitution = F;
     initializeGenomicElementType("g1", m1, 1.0);
     initializeGenomicElement(g1, 0, 99999);
