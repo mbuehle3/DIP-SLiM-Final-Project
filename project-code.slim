@@ -10,8 +10,6 @@
 initialize() {
     initializeSLiMModelType("nonWF");
     defineConstant("K", 1000); // carrying capacity for the wild population
-    defineConstant("opt1", 0.0); // phenotypic optimum 
-    defineConstant("opt2", 10.0);
     defineConstant("Tdelta", 5000);
     // m1 QTL -> Draws its select coef from norm distrib. w/ mean 0.0 and std dev 1.0
     initializeMutationType("m1", 0.5, "n", 0.0, 1.0); 
@@ -26,12 +24,13 @@ initialize() {
     defineConstant("N1", 1000); // size of subpop1; wild Georgia Population 
     defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
     defineConstant("N3", 0) // size of subpop3: Re-introduced population
+    defineConstant("Opt1", 5) // Phenotypic optimum
+    defineConstant("0pt2", -5) // Phenotypic optimum of the re-introduced population
 }
    
 1 { 
     sim.addSubpop("p1", N1);
-    sim.addSubpop("p2", N2);
-    sim.addSubpop("p3", N3);
+
 }   
 
 // TO DO LIST::
@@ -81,13 +80,32 @@ initialize() {
 // Releases 30 snakes/year into the re-introduced/resident population
 // Only 80% of those 30 snakes actually survive due to first year mortality
 // -> survival_rate = rbinom(1, 1 , 0.8) where 1 = survival and 0 = death
+5000 {
+        sim.addSubpop("p2", N2);
+
+}
 5001:5011 {
 
 
-// }
+}
+
+5011 {
+    sim.addSubpop("p3", N3);
+}
 
 
 // // Set up the re-introduced population
-// 5011:5041 {
-// // 30 snakes per year, .50 sex ratio eventually 
-// }
+fitness(m2) { return 1.0; }
+
+5011:5041 {
+1 { sim.addSubpop("p1", 500); }
+5011: late() {
+inds = sim.subpopulations.individuals;
+phenotypes = inds.sumOfMutationsOfType(m2);
+inds.fitnessScaling = 1.5 - (phenotypes - 10.0)^2 * 0.005;
+if (sim.generation % 100 == 0)
+catn(sim.generation + ": Mean phenotype == " + mean(phenotypes));
+
+
+// 30 snakes per year, .50 sex ratio eventually 
+}
