@@ -13,7 +13,8 @@ initialize() {
     defineConstant("opt1", 0.0); // phenotypic optimum 
     defineConstant("opt2", 10.0);
     defineConstant("Tdelta", 5000);
-    initializeMutationType("m1", 0.5, "n", 0.0, 1.0); // QLT
+    initializeMutationType("m1", 0.5, "n", 0.0, 1.0); // QTL -> Draws its select coef from norm distrib. w/ mean 0.0 and std dev 1.0
+    m1.convertToSubstitution = F;
     initializeGenomicElementType("g1", m1, 1.0);
     initializeGenomicElement(g1, 0, 99999);
     initializeMutationRate(1e-7);
@@ -73,13 +74,19 @@ initialize() {
 
 // think about how to do the age structures
 
-// set up the OCIC breeding colony
-// 5001 {
+// Noah - set up the OCIC breeding colony
+// Draws 40 random individuals from subpop p1, the original'wild' population
+// Runs 10 generations of offspring creation
+// Releases 30 snakes/year into the re-introduced/resident population
+// Only 80% of those 30 snakes actually survive due to first year mortality
+// -> survival_rate = rbinom(1, 1 , 0.8) where 1 = survival and 0 = death
+5001:5011 {
+
 
 // }
 
 
 // // Set up the re-introduced population
-// 5011:5021 {
+// 5011:5041 {
 // // 30 snakes per year, .50 sex ratio eventually 
 // }
