@@ -82,10 +82,24 @@ initialize() {
 // Releases 30 snakes/year into the re-introduced/resident population
 // Only 80% of those 30 snakes actually survive due to first year mortality
 // -> survival_rate = rbinom(1, 1 , 0.8) where 1 = survival and 0 = death
+<<<<<<< HEAD
 5000 {
         sim.addSubpop("p2", N2);
 }
 5001:5011 {
+=======
+5001 early() {
+// random migration from p1 subpopulation (from manual page 353)
+	nIndividuals = sum(p1.individualCount);
+	nMigrants = rpois(1, nIndividuals * 0.04); //0.04 represents sampling 40 individuals from the original 1000 wild 
+	migrants = sample(p1.individuals, nMigrants)
+
+5001:5041 {
+
+late() {
+// here be dragons
+sample(sim.subpopulations.individuals, 100).fitnessScaling = 0;
+>>>>>>> ff79d2f (added lines for gen 5001 to migrate 40 individuals from subpop1)
 
 
 }
