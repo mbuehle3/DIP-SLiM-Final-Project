@@ -97,12 +97,10 @@ reproduction () {
 // Releases 30 snakes/year into the re-introduced/resident population
 // Only 80% of those 30 snakes actually survive due to first year mortality
 // -> survival_rate = rbinom(1, 1 , 0.8) where 1 = survival and 0 = death
-<<<<<<< HEAD
 5000 {
         sim.addSubpop("p2", N2);
 }
 5001:5011 {
-=======
 5001 early() {
 // random migration from p1 subpopulation (from manual page 353)
 	nIndividuals = sum(p1.individualCount);
@@ -116,7 +114,6 @@ late() {
 // here be dragons
 
 sample(sim.subpopulations.individuals, 100).fitnessScaling = 0;
->>>>>>> ff79d2f (added lines for gen 5001 to migrate 40 individuals from subpop1)
 
 
 }
@@ -129,7 +126,7 @@ sample(sim.subpopulations.individuals, 100).fitnessScaling = 0;
 // // Set up the re-introduced population
 // fitness(m2) { return 1.0; }
 
-5011:5500 {
+5011:5500 early() {
 // need to set up the migration block to pull 30 individuals from the OCIC population
 // In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
 	n2.migrants = 15;
@@ -142,11 +139,28 @@ sample(sim.subpopulations.individuals, 100).fitnessScaling = 0;
     kill.fitnessScaling = 0.0;
         }
     }
-	FMigrants = 30; //0.04 represents sampling 40 individuals from the original 1000 wild 
-	migrants = 
-5011: late() {
+
+
+
+// Need to work out the fitness function so that the re-introduced moves towards its optimum
+fitness(m1) {return 1.0}
+
+5011: early() {
+
+    p3.inds = p3.individuals;
+    phenotypes = p3.inds.sumOfMutationsOfType(m1);
+    optimum = Opt2; //here's where we flip the switch on the environment
+    deviations = optimum - phenotypes;
+    fitnessFunctionMax = dnorm(0.0, 0.0, 5.0);
+    adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax;
+    inds.fitnessScaling = 0.1 + adaptation * 0.9;
+    inds.tagF = phenotypes; // just for output below
+    // density-dependence with a maximum benefit at low density
+    p1.fitnessScaling = min(K / p1.individualCount, 1.0);
+}
 inds = sim.subpopulations.individuals;
 phenotypes = inds.sumOfMutationsOfType(m2);
+optimum = Opt2
 inds.fitnessScaling = 1.5 - (phenotypes - 10.0)^2 * 0.005;
 if (sim.generation % 100 == 0)
 catn(sim.generation + ": Mean phenotype == " + mean(phenotypes));
