@@ -129,11 +129,11 @@ sample(sim.subpopulations.individuals, 100).fitnessScaling = 0;
 5011:5500 early() {
 // need to set up the migration block to pull 30 individuals from the OCIC population
 // In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
-	n2.migrants = 15;
+	p2.migrants = 15;
     // p2.Individuals = sum(p2.individualCount);
-    f.n2.migrants = p2.sampleIndividuals(n2.migrants, sex = "F");
-    m.n2.migrants = p2.sampleIndividuals(n2.migrants, sex = "M");
-    p3.takeMigrants(c(f.n2.migrants, m.n2.migrants));
+    f.p2.migrants = p2.sampleIndividuals(p2.migrants, sex = "F");
+    m.p2.migrants = p2.sampleIndividuals(p2.migrants, sex = "M");
+    p3.takeMigrants(c(f.p2.migrants, m.p2.migrants));
 
     kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
     kill.fitnessScaling = 0.0;
