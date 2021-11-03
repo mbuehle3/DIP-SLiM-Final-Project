@@ -102,12 +102,16 @@ reproduction () {
 }
 5001:5011 {
 5001 early() {
-// random migration from p1 subpopulation (from manual page 353)
-	nIndividuals = sum(p1.individualCount);
-	nMigrants = rpois(1, nIndividuals * 0.04); //0.04 represents sampling 40 individuals from the original 1000 wild 
-	migrants = sample(p1.individuals, nMigrants)
+	 p1.migrants = 15; // May need to change the p's to n's if doesn't track
+    // p2.Individuals = sum(p2.individualCount);
+    f.p1.migrants = p1.sampleIndividuals(n1.migrants, sex = "F");
+    m.p1.migrants = p1.sampleIndividuals(n1.migrants, sex = "M");
+    p2.takeMigrants(c(f.p1.migrants, m.p1.migrants)); //Takes migrants from p1 and puts into p2
+}
+    
 // should add in some way to separate the breeders from the offspring so we only pull from offspring 
-// should explore maintaining some sort of sex ratio for the migration rate, we can pull this from the n3 migration 
+// should explore maintaining some sort of sex ratio for the migration rate, we can pull this from the n3 migration
+5001:5011 { 
 5001:5041 {
 
 late() {
