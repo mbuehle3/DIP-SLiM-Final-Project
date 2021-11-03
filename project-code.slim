@@ -108,11 +108,13 @@ reproduction () {
 	nIndividuals = sum(p1.individualCount);
 	nMigrants = rpois(1, nIndividuals * 0.04); //0.04 represents sampling 40 individuals from the original 1000 wild 
 	migrants = sample(p1.individuals, nMigrants)
-
+// should add in some way to separate the breeders from the offspring so we only pull from offspring 
+// should explore maintaining some sort of sex ratio for the migration rate, we can pull this from the n3 migration 
 5001:5041 {
 
 late() {
 // here be dragons
+
 sample(sim.subpopulations.individuals, 100).fitnessScaling = 0;
 >>>>>>> ff79d2f (added lines for gen 5001 to migrate 40 individuals from subpop1)
 
@@ -125,11 +127,23 @@ sample(sim.subpopulations.individuals, 100).fitnessScaling = 0;
 
 
 // // Set up the re-introduced population
-fitness(m2) { return 1.0; }
+// fitness(m2) { return 1.0; }
 
 5011:5500 {
 // need to set up the migration block to pull 30 individuals from the OCIC population
+// In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
+	n2.migrants = 15;
+    // p2.Individuals = sum(p2.individualCount);
+    f.n2.migrants = p2.sampleIndividuals(n2.migrants, sex = "F");
+    m.n2.migrants = p2.sampleIndividuals(n2.migrants, sex = "M");
+    p3.takeMigrants(c(f.n2.migrants, m.n2.migrants));
 
+    kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
+    kill.fitnessScaling = 0.0;
+        }
+    }
+	FMigrants = 30; //0.04 represents sampling 40 individuals from the original 1000 wild 
+	migrants = 
 5011: late() {
 inds = sim.subpopulations.individuals;
 phenotypes = inds.sumOfMutationsOfType(m2);
