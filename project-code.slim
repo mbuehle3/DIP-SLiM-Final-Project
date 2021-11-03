@@ -161,7 +161,7 @@ fitness(m1) {return 1.0}
 inds = sim.subpopulations.individuals;
 phenotypes = inds.sumOfMutationsOfType(m2);
 optimum = Opt2
-inds.fitnessScaling = 1.5 - (phenotypes - 10.0)^2 * 0.005;
+inds.fitnessScaling = 1.5 - (phenotypes - optimum)^2 * 0.005;
 if (sim.generation % 100 == 0)
 catn(sim.generation + ": Mean phenotype == " + mean(phenotypes));
 
