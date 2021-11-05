@@ -19,7 +19,7 @@ initialize() {
     initializeMutationRate(1e-7); //  are  these rates for the indigo snake, or are they from the original script? -C
     initializeRecombinationRate(5e-8);
     initializeSex("A");
-    // defineConstant("buttton", button);
+    defineConstant("buttton", button);
     // defineConstant("m_12", 1e-4); // migration rate from subpop 1 to subpop 2
     // defineConstant("m_21", 1e-4); // migration rate from subpop 2 to subpop 1
     defineConstant("N1", 1000); // size of subpop1; wild Georgia Population 
@@ -49,13 +49,13 @@ reproduction(p2){
 	if (individual.sex == "F" & individual.tag == 1) {
 		// If individual is in p2 and does NOT have breeder ==1 tag (aka offspring), then individual doesn't mate
 		if (individual.age == 3) {
-		mate = p2.sampleIndividuals(1, sex="M", minAge=3, tag ==1); // Male must have breeder tag
+		mate = subpop.sampleIndividuals(1, sex="M", minAge=3, individual.tag ==1); // Male must have breeder tag
 		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		subpop.addCrossed(individual, mate);
 		individual.tag == 0;
 		}
 		else if (individual.age >= 4) {
-		mate = p2.sampleIndividuals(1, sex="M", minAge=3, tag ==1); // Male must have breeder tag
+		mate = subpop.sampleIndividuals(1, sex="M", minAge=3, individual.tag ==1); // Male must have breeder tag
 		litterSize = rpois(1, 8); // same as above for litter range
 		subpop.addCrossed(individual, mate);
 		individual.tag == 0;
@@ -103,12 +103,21 @@ reproduction(p2){
 // Casey start writing code to get the wild population cooking
 // Think about output and if you can get a file recording output, great, if not we can figure Wednesday
 1:5000 {
-    P1Size = p1.individuals;
-    phenotype = P1Size.sumOfMutationsOfType(m1);
+early() {
+    p1.inds = p1.individuals;
+    p1.phenotypes = p1.inds.sumOfMutationsOfType(m1);
     optimum = Opt1;
-    
+    deviations = optimum - p1.phenotypes;
+    fitnessFunctionMax = dnorm(0.0, 0.0, 5.0);
+    adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // may not need this. What purpose does adding in the adaptation serve.
+    p1.inds.fitnessScaling = 0.1 + adaptation * 0.9;
     p1.fitnessScaling = min(K / p1.individualCount, 1.0);
     }
+late() {
+    if ((sim.generation-1) % 100 == 0);
+    catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(p1.phenotypes))
+}
+}
 
 // think about how to do the age structures
 
@@ -122,18 +131,12 @@ reproduction(p2){
         sim.addSubpop("p2", N2);
 }
 
-fitness(NULL) {
-	// individuals in subpop p2 have fitness all set to a standard 1 here.
-	if (p2.individual)
-		return 1.0;
-}
-
 5001 early() {
-	N1Migrations = 20; // May need to change the migrant p's to n's if doesn't track
+	 n1.migrants = 20; // May need to change the migrant p's to n's if doesn't track
     // p2.Individuals = sum(p2.individualCount);
-    FemaleN1Migrations = p1.sampleIndividuals(N1Migrations, sex = "F");
-    MaleN1Migrations = p1.sampleIndividuals(N1Migrations, sex = "M");
-    p2.takeMigrants(c(FemaleN1Migrations, MaleN1Migrations)); //Takes migrants from p1 and puts into p2
+    f.n1.migrants = p1.sampleIndividuals(n1.migrants, sex = "F");
+    m.n1.migrants = p1.sampleIndividuals(n1.migrants, sex = "M");
+    p2.takeMigrants(c(f.n1.migrants, m.n1.migrants)); //Takes migrants from p1 and puts into p2
     p2.individuals.tag = 1; // Tag original 40 breeder population with 1 and offspring population with 0.
 }
     
@@ -160,8 +163,7 @@ fitness(NULL) {
 
     kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
     kill.fitnessScaling = 0.0;
-        }
-
+}
 
 
 
@@ -170,7 +172,7 @@ fitness(m1) {return 1.0;}
 
 5011: early() {
     if (p3.individuals == 0)
-    {catn("Population went extinct at generation: " + sim.generation);} else
+    {catn("Population went extinct at generation: " + sim.generation)}
     p3.inds = p3.individuals;
     phenotypes = p3.inds.sumOfMutationsOfType(m1);
     optimum = Opt2;
@@ -182,11 +184,11 @@ fitness(m1) {return 1.0;}
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = min(K / p1.individualCount, 1.0);
 
+}
 
-
-    if (sim.generation % 100 == 0) {
+if (sim.generation % 100 == 0)
 catn(sim.generation + ": Mean phenotype == " + mean(phenotypes) + "Population Size: " + p3.inds);
-    }
+
 
 // 30 snakes per year, .50 sex ratio eventually 
 }
