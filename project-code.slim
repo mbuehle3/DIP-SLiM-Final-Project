@@ -113,19 +113,11 @@ early() {
     // catn(adaptation + "\n");
     p1.fitnessScaling = 0.1 +  0.9;
     p1.fitnessScaling = min(K / p1.individualCount, 1.0);
-<<<<<<< HEAD
     
 
     // if ((sim.generation-1) % 100 == 0) {
     // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
     // }
-=======
-    }
-late() {
-    if ((sim.generation-1) % 100 == 0);
-    catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(p1.phenotypes));
-    }
->>>>>>> 4a55d9eb70a8a02e3cc623f988e1605843c467b5
 }
 
 // think about how to do the age structures
@@ -140,15 +132,8 @@ late() {
         sim.addSubpop("p2", N2);
 }
 
-<<<<<<< HEAD
 5001 early (){
 	N1Migrants = 20; // May need to change the migrant p's to n's if doesn't track
-=======
-fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
-
-5001 early() {
-	 n1.migrants = 20; // May need to change the migrant p's to n's if doesn't track
->>>>>>> 4a55d9eb70a8a02e3cc623f988e1605843c467b5
     // p2.Individuals = sum(p2.individualCount);
     FemaleN1Migrations = p1.sampleIndividuals(N1Migrants, sex = "F");
     MaleN1Migrations = p1.sampleIndividuals(N1Migrants, sex = "M");
