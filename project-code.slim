@@ -125,6 +125,12 @@ reproduction(p2){
         sim.addSubpop("p2", N2);
 }
 
+fitness(NULL) {
+	// individuals in subpop p2 have fitness all set to a standard 1 here.
+	if (p2.individual)
+		return 1.0;
+}
+
 5001 early() {
 	 n1.migrants = 20; // May need to change the migrant p's to n's if doesn't track
     // p2.Individuals = sum(p2.individualCount);
