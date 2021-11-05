@@ -163,7 +163,8 @@ reproduction(p2){
 fitness(m1) {return 1.0}
 
 5011: early() {
-
+    if (p3.individuals == 0)
+    {catn("Population went extinct at generation: " + sim.generation)}
     p3.inds = p3.individuals;
     phenotypes = p3.inds.sumOfMutationsOfType(m1);
     optimum = Opt2;
@@ -174,13 +175,11 @@ fitness(m1) {return 1.0}
     inds.tagF = phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = min(K / p1.individualCount, 1.0);
+
 }
-inds = sim.subpopulations.individuals;
-phenotypes = inds.sumOfMutationsOfType(m2);
-optimum = Opt2
-inds.fitnessScaling = 1.5 - (phenotypes - optimum)^2 * 0.005;
+
 if (sim.generation % 100 == 0)
-catn(sim.generation + ": Mean phenotype == " + mean(phenotypes));
+catn(sim.generation + ": Mean phenotype == " + mean(phenotypes) + "Population Size: " + p3.inds);
 
 
 // 30 snakes per year, .50 sex ratio eventually 
