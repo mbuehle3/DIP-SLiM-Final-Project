@@ -46,7 +46,7 @@ reproduction(p1){
 }
 // Reproduction mechanics for the OCIC p2 population (page 390) -> Breeding individuals must have breeder tag ==1   
 reproduction(p2){
-	if (individual.sex == "F" && individual.tag == 1) {
+	if (individual.sex == "F" & individual.tag == 1) {
 		// If individual is in p2 and does NOT have breeder ==1 tag (aka offspring), then individual doesn't mate
 		if (individual.age == 3) {
 		mate = subpop.sampleIndividuals(1, sex="M", minAge=3, individual.tag ==1); // Male must have breeder tag
@@ -166,14 +166,14 @@ fitness(m1) {return 1.0}
 
     p3.inds = p3.individuals;
     phenotypes = p3.inds.sumOfMutationsOfType(m1);
-    optimum = Opt2; //here's where we flip the switch on the environment
+    optimum = Opt2;
     deviations = optimum - phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 5.0);
-    adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax;
+    adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // may not need this. What purpose does adding in the adaptation serve.
     inds.fitnessScaling = 0.1 + adaptation * 0.9;
     inds.tagF = phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
-    p1.fitnessScaling = min(K / p1.individualCount, 1.0);
+    p3.fitnessScaling = min(K / p1.individualCount, 1.0);
 }
 inds = sim.subpopulations.individuals;
 phenotypes = inds.sumOfMutationsOfType(m2);
