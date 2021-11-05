@@ -103,10 +103,12 @@ reproduction(p2){
 // Casey start writing code to get the wild population cooking
 // Think about output and if you can get a file recording output, great, if not we can figure Wednesday
 1:5000 {
-
-
-    } )
-}
+    p1.inds = p1.individuals;
+    phenotype = p1.inds.sumOfMutationsOfType(m1);
+    optimum = Opt2
+    
+    p1.fitnessScaling = min(K / p1.individualCount, 1.0);
+    }
 
 // think about how to do the age structures
 
