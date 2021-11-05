@@ -131,6 +131,8 @@ late() {
         sim.addSubpop("p2", N2);
 }
 
+fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
+
 5001 early() {
 	 n1.migrants = 20; // May need to change the migrant p's to n's if doesn't track
     // p2.Individuals = sum(p2.individualCount);
