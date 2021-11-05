@@ -105,7 +105,7 @@ reproduction(p2){
 1:5000 {
     p1.inds = p1.individuals;
     phenotype = p1.inds.sumOfMutationsOfType(m1);
-    optimum = Opt2
+    optimum = Opt2;
     
     p1.fitnessScaling = min(K / p1.individualCount, 1.0);
     }
@@ -154,13 +154,12 @@ reproduction(p2){
 
     kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
     kill.fitnessScaling = 0.0;
-        }
-    }
+}
 
 
 
 // Need to work out the fitness function so that the re-introduced moves towards its optimum
-fitness(m1) {return 1.0}
+fitness(m1) {return 1.0;}
 
 5011: early() {
 
