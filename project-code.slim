@@ -69,11 +69,29 @@ reproduction(p2, 'F'){
             //     subpop = p4;
             // };
                 }
-
 	//Create if statement to stop p2 offspring from mating, create offpsring tag down for p2 offspring	
 	}
 }
 		
+reproduction(p3) {
+	if (individual.sex == "F" & individual.age == 3) {
+		mate = subpop.sampleIndividuals(1, sex="M");
+		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
+		for (i in seqLen(litterSize)){
+            subpop.addCrossed(individual, mate);
+        }
+		}
+		else if (individual.sex == "F" & individual.age >= 4) {
+		mate = subpop.sampleIndividuals(1, sex="M");
+		litterSize = rpois(1, 8); // same as above for litter range
+		for (i in seqLen(litterSize)){
+            subpop.addCrossed(individual, mate);
+        }
+		}	
+	}
+
+
+
 1 { 
     sim.addSubpop("p1", N1);
     catn("Creating Wild Population of size " + N1);
@@ -118,8 +136,8 @@ early() {
     // catn("Calculating phenotypes for the wild population");
     P1Individuals = sim.subpopulations.individuals;
     P1Phenotypes = P1Individuals.sumOfMutationsOfType(m1);
-    optimum = Opt1;
-    deviations = optimum - P1Phenotypes;
+    Optimum = Opt1;
+    deviations = Optimum - P1Phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 5.0);
     adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // need to figure out why this is returning a whole list of values and not just a singleton 
     // catn(adaptation + "\n");
@@ -145,15 +163,12 @@ early() {
 5000 early() {
         sim.addSubpop("p2", N2);
         sim.addSubpop("p4", 0);
-        p1.individuals.tag = 1;
-        p2.individuals.tag = 1;
 }
 
 
 fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
-5000 {
-    
+5000 late() {    
     catn("Taking individuals to seed the OCIC Breeding colony");
     N1Migrants = 20; // May need to change the migrant p's to n's if doesn't track
     // p2.Individuals = sum(p2.individualCount);
@@ -172,24 +187,22 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 
 5002 {
-
-    catn("Killed the wild population:" + p1.individualCount + " OCIC Breeding colony size: " + p2.individualCount);
-
+    catn("Killed the wild population: " + p1.individualCount + " OCIC Breeding colony size: " + p2.individualCount);
 }    
 
 
 // something messy is going on here that is bogging down the script
-5002:5032 {
+5000:5032 {
     catn("Starting to breed snakes");
     catn(p2.individualCount);
     P2Phenotype = p2.individuals.sumOfMutationsOfType(m1);
     // p2.fitnessScaling = K2 / p2.individualCount;
-    catn("OCIC colony size = " + p2.individualCount + "Mean phenotype at the OCIC: " + P2Phenotype);
-        if (sim.generation % 100 == 0){
-        catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
+    catn(sim.generation + ": OCIC colony size = " + p2.individualCount + ": Mean phenotype at the OCIC: " + mean(P2Phenotype) + "\n");
+        // if (sim.generation % 100 == 0){
+        // catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
     }
 
-}
+// }
     
 // should add in some way to separate the breeders from the offspring so we only pull from offspring 
 // should explore maintaining some sort of sex ratio for the migration rate, we can pull this from the n3 migration
@@ -205,7 +218,7 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 
 
-5011:5500 early() {
+5011:5041 {
 // need to set up the migration block to pull 30 individuals from the OCIC population
 // Make sure the 30 individuals pulled are individual.tag == 0 (so they are offspring and not breeders)
 // In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
@@ -217,6 +230,7 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
     // kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
     // kill.fitnessScaling = 0.0;
+    catn(p3.individualCount);
 
 }
 
@@ -224,7 +238,7 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 // Need to work out the fitness function so that the re-introduced moves towards its optimum
 
-5011: early() {
+5042:5600 {
     if (p3.individualCount == 0) {
         catn("Population went extinct at generation: " + sim.generation);
         sim.simulationFinished();
