@@ -73,17 +73,17 @@ reproduction(p2, 'F'){
 	}
 }
 		
-reproduction(p3) {
-	if (individual.sex == "F" & individual.age == 3) {
+reproduction(p3, "F") {
+	if (individual.age == 3) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
+		litterSize = rpois(1, 2); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
 		}
-		else if (individual.sex == "F" & individual.age >= 4) {
+		else if (individual.age >= 4) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 8); // same as above for litter range
+		litterSize = rpois(1, 3); // same as above for litter range
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
@@ -131,18 +131,20 @@ reproduction(p3) {
 
 // Casey start writing code to get the wild population cooking
 // Think about output and if you can get a file recording output, great, if not we can figure Wednesday
-1:5000 
-early() {
+
+fitness(m1,p1) {return 1.0;}
+
+1:5000 early() {
     // catn("Calculating phenotypes for the wild population");
     P1Individuals = sim.subpopulations.individuals;
     P1Phenotypes = P1Individuals.sumOfMutationsOfType(m1);
     Optimum = Opt1;
     deviations = Optimum - P1Phenotypes;
-    fitnessFunctionMax = dnorm(0.0, 0.0, 5.0);
+    fitnessFunctionMax = dnorm(0.0, 0.0, 1.0);
     adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // need to figure out why this is returning a whole list of values and not just a singleton 
     // catn(adaptation + "\n");
     P1Individuals.fitnessScaling = 0.1 + adaptation * 0.9;
-    P1Individuals.fitnessScaling = min(K / p1.individualCount, 1.0);
+    P1Individuals.fitnessScaling = K / p1.individualCount;
     if (sim.generation % 100 == 0){
         catn(sim.generation + ": Optimum Phenotype is: "+ Opt1 + ": Mean phenotype of wild population = " + mean(P1Phenotypes) + " Wild Population Size: " + p1.individualCount);
     }
@@ -166,7 +168,8 @@ early() {
 }
 
 
-fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
+fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
+
 
 5000 late() {    
     catn("Taking individuals to seed the OCIC Breeding colony");
@@ -193,13 +196,15 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 // something messy is going on here that is bogging down the script
 5000:5032 {
-    catn("Starting to breed snakes");
-    catn(p2.individualCount);
+    // catn("Starting to breed snakes");
+    // catn("POpulation of the OCIC Breeding colony: " + p2.individualCount);
     P2Phenotype = p2.individuals.sumOfMutationsOfType(m1);
     // p2.fitnessScaling = K2 / p2.individualCount;
-    catn(sim.generation + ": OCIC colony size = " + p2.individualCount + ": Mean phenotype at the OCIC: " + mean(P2Phenotype) + "\n");
+    // catn(sim.generation + ": OCIC colony size = " + p2.individualCount + ": Mean phenotype at the OCIC: " + mean(P2Phenotype));
         // if (sim.generation % 100 == 0){
         // catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
+    // p4.fitnessScaling = K2 / p4.individualCount;
+    catn("P4 population size: " + p4.individualCount);
     }
 
 // }
@@ -218,27 +223,26 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 
 
-5011:5041 {
+5011:5021 early() {
 // need to set up the migration block to pull 30 individuals from the OCIC population
 // Make sure the 30 individuals pulled are individual.tag == 0 (so they are offspring and not breeders)
 // In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
-	P2Migrants = 15;
+	P2Migrants = 12;
     // p2.Individuals = sum(p2.individualCount);
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "M");
     p3.takeMigrants(c(FemaleP2Migrants, MaleP2Migrants));
-
-    // kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
-    // kill.fitnessScaling = 0.0;
     catn(p3.individualCount);
+    }
+// }
+ 
+// 5012 {
+//     catn(p3.individualCount);
+// }
 
-}
+fitness(m1,p3) {return 1.0;}
 
-
-
-// Need to work out the fitness function so that the re-introduced moves towards its optimum
-
-5042:5600 {
+5011:5600 {
     if (p3.individualCount == 0) {
         catn("Population went extinct at generation: " + sim.generation);
         sim.simulationFinished();
@@ -247,16 +251,16 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     phenotypes = P3Iinds.sumOfMutationsOfType(m1);
     optimum2 = Opt2;
     deviations = optimum2 - phenotypes;
-    fitnessFunctionMax = dnorm(0.0, 0.0, 5.0);
-    adaptation = dnorm(deviations, 0.0, 5.0); // may not need this. What purpose does adding in the adaptation serve.
+    fitnessFunctionMax = dnorm(0.0, 0.0, 1.0);
+    adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // may not need this. What purpose does adding in the adaptation serve.
     P3Iinds.fitnessScaling = 0.1 + adaptation * 0.9;
     P3Iinds.tagF = phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
-    p3.fitnessScaling = min(K / p3.individualCount, 1.0);
+    p3.fitnessScaling = K / p3.individualCount;
 
 
 
-if (sim.generation % 10 == 0){
-catn(sim.generation + ": Mean phenotype == " + mean(phenotypes) + ": Reintroduced Population Size: " + p3.individualCount);
+if (sim.generation % 50 == 0){
+catn(sim.generation + ": Optimum Phenotype for Re-introduced population is: " + Opt2 + ": Mean phenotype == " + mean(phenotypes) + ": Reintroduced Population Size: " + p3.individualCount);
 }
 }
