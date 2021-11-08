@@ -26,43 +26,42 @@ initialize() {
     defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
     defineConstant("N3", 0); // size of subpop3: Re-introduced population
     defineConstant("Opt1", 5); // Phenotypic optimum
-    defineConstant("0pt2", -5); // Phenotypic optimum of the re-introduced population
+    defineConstant("Opt2", -5); // Phenotypic optimum of the re-introduced population
 
 }
 // Reproduction mechanics for the original wild p1 population   
-reproduction(p1){
-	if (individual.sex == "F") {
-		if (individual.age == 3) {
+reproduction(){
+	if (individual.sex == "F" & individual.age == 3) {
 		mate = subpop.sampleIndividuals(1, sex="M", minAge=3);
 		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		subpop.addCrossed(individual, mate);
 		}
-		else if (individual.age >= 4) {
+		else if (individual.sex == "F" & individual.age >= 4) {
 		mate = subpop.sampleIndividuals(1, sex="M", minAge=3);
 		litterSize = rpois(1, 8); // same as above for litter range
 		subpop.addCrossed(individual, mate);
 		}	
 	}
-}
+
 // Reproduction mechanics for the OCIC p2 population (page 390) -> Breeding individuals must have breeder tag ==1   
-reproduction(p2){
-	if (individual.sex == "F" & individual.tag == 1) {
-		// If individual is in p2 and does NOT have breeder ==1 tag (aka offspring), then individual doesn't mate
-		if (individual.age == 3) {
-		mate = subpop.sampleIndividuals(1, sex="M", minAge=3, individual.tag ==1); // Male must have breeder tag
-		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
-		subpop.addCrossed(individual, mate);
-		individual.tag == 0;
-		}
-		else if (individual.age >= 4) {
-		mate = subpop.sampleIndividuals(1, sex="M", minAge=3, individual.tag ==1); // Male must have breeder tag
-		litterSize = rpois(1, 8); // same as above for litter range
-		subpop.addCrossed(individual, mate);
-		individual.tag == 0;
-		}
-	//Create if statement to stop p2 offspring from mating, create offpsring tag down for p2 offspring	
-	}
-}
+// reproduction(p2){
+// 	if (individual.sex == "F" & individual.tag == 1) {
+// 		// If individual is in p2 and does NOT have breeder ==1 tag (aka offspring), then individual doesn't mate
+// 		if (individual.age == 3) {
+// 		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); // Male must have breeder tag
+// 		    litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
+// 		    subpop.addCrossed(individual, mate);
+// 		    individual.tag == 0;
+// 		}
+// 		else if (individual.sex == "F" & individual.age >= 4) {
+// 		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); // Male must have breeder tag
+// 		    litterSize = rpois(1, 8); // same as above for litter range
+// 		    subpop.addCrossed(individual, mate);
+// 		    individual.tag == 0;
+// 		}
+// 	//Create if statement to stop p2 offspring from mating, create offpsring tag down for p2 offspring	
+// 	}
+// }
 		
 1 { 
     sim.addSubpop("p1", N1);
@@ -142,6 +141,9 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     p2.takeMigrants(c(FemaleN1Migrations, MaleN1Migrations)); //Takes migrants from p1 and puts into p2
     p2.individuals.tag = 1; // Tag original 40 breeder population with 1 and offspring population with 0.
 }
+5001 late() {
+
+}
     
 // should add in some way to separate the breeders from the offspring so we only pull from offspring 
 // should explore maintaining some sort of sex ratio for the migration rate, we can pull this from the n3 migration
@@ -164,8 +166,8 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     MaleP2Migrants = p2.sampleIndividuals(P2Migrants, sex = "M");
     p3.takeMigrants(c(FemaleP2Migrants, MaleP2Migrants));
 
-    kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
-    kill.fitnessScaling = 0.0;
+    // kill = p3.sampleIndividuals(p2.IndividualCount * 0.2);
+    // kill.fitnessScaling = 0.0;
 
 }
 
@@ -175,19 +177,19 @@ fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 fitness(m1) {return 1.0;}
 
 5011: early() {
-    if (p3.individuals == 0) {
+    if (p3.individualCount == 0) {
         catn("Population went extinct at generation: " + sim.generation);
     }
-    p3.inds = p3.individuals;
-    phenotypes = p3.inds.sumOfMutationsOfType(m1);
-    optimum = Opt2;
-    deviations = optimum - phenotypes;
+    P3Iinds = p3.individuals;
+    phenotypes = P3Iinds.sumOfMutationsOfType(m1);
+    optimum2 = Opt2;
+    deviations = optimum2 - phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 5.0);
-    adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // may not need this. What purpose does adding in the adaptation serve.
-    inds.fitnessScaling = 0.1 + adaptation * 0.9;
-    inds.tagF = phenotypes; // just for output below
+    adaptation = dnorm(deviations, 0.0, 5.0); // may not need this. What purpose does adding in the adaptation serve.
+    P3Iinds.fitnessScaling = 0.1 + adaptation * 0.9;
+    P3Iinds.tagF = phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
-    p3.fitnessScaling = min(K / p1.individualCount, 1.0);
+    p3.fitnessScaling = min(K / p3.individualCount, 1.0);
 
 
 
