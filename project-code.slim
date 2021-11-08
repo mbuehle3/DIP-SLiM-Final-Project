@@ -10,6 +10,7 @@
 initialize() {
     initializeSLiMModelType("nonWF");
     defineConstant("K", 1000); // carrying capacity for the wild population
+    defineConstant("K2", 40);
     defineConstant("Tdelta", 5000);
     // m1 QTL -> Draws its select coef from norm distrib. w/ mean 0.0 and std dev 1.0
     initializeMutationType("m1", 0.5, "n", 0.0, 1.0); 
@@ -48,20 +49,20 @@ reproduction(p1) {
 	}
 
 // Reproduction mechanics for the OCIC p2 population (page 390) -> Breeding individuals must have breeder tag ==1   
-reproduction(p2){
-	if (individual.sex == "F" & individual.tag == 1) {
+reproduction(p2, 'F'){
 		// If individual is in p2 and does NOT have breeder ==1 tag (aka offspring), then individual doesn't mate
-		if (individual.age == 3) {
+		if (individual.age == 3 & individual.tag == 1) {
 		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); // Male must have breeder tag
 		    litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
-		    subpop.addCrossed(individual, mate);
-		    individual.tag == 0;
-		}
-		else if (individual.sex == "F" & individual.age >= 4) {
+		    for (i in seqLen(litterSize)){
+                subpop.addCrossed(individual, mate);
+                }		}
+		else if (individual.tag == 1 & individual.age >= 4) {
 		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); // Male must have breeder tag
 		    litterSize = rpois(1, 8); // same as above for litter range
-		    subpop.addCrossed(individual, mate);
-		    individual.tag == 0;
+		    for (i in seqLen(litterSize)){
+            subpop.addCrossed(individual, mate);
+                
 		}
 	//Create if statement to stop p2 offspring from mating, create offpsring tag down for p2 offspring	
 	}
@@ -135,12 +136,15 @@ early() {
 // Releases 30 snakes/year into the re-introduced/resident population
 // Only 80% of those 30 snakes actually survive due to first year mortality
 // -> survival_rate = rbinom(1, 1 , 0.8) where 1 = survival and 0 = death
-5000 {
+5000 early() {
         sim.addSubpop("p2", N2);
+        p1.individuals.tag = 1;
+        p2.individuals.tag = 1;
 }
 
 
-5001:5031 late () {
+5000 {
+    
     catn("Taking individuals to seed the OCIC Breeding colony");
     N1Migrants = 20; // May need to change the migrant p's to n's if doesn't track
     // p2.Individuals = sum(p2.individualCount);
@@ -151,9 +155,8 @@ early() {
     // MaleN1Migrations.tag = 1;
     catn("Gathered males");
     p2.takeMigrants(c(FemaleN1Migrations, MaleN1Migrations)); //Takes migrants from p1 and puts into p2
-    p2.individuals.tag = 1; // Tag original 40 breeder population with 1 and offspring population with 0.
-    p2.fitnessScaling = K / p2.individualCount;
-    catn("OCIC colony size = " + p2.individualCount);
+    p2.individuals.tag = 1;
+    catn(p2.individuals.tag);
     p1.fitnessScaling = 0;
 }
 
@@ -166,12 +169,15 @@ early() {
 }    
 
 fitness(m1) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
+
 // something messy is going on here that is bogging down the script
 5002:5032 {
     catn("Starting to breed snakes");
     catn(p2.individualCount);
     P2Phenotype = p2.individuals.sumOfMutationsOfType(m1);
-    if (sim.generation % 100 == 0){
+    p2.fitnessScaling = K2 / p2.individualCount;
+    catn("OCIC colony size = " + p2.individualCount);
+        if (sim.generation % 100 == 0){
         catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
     }
 
@@ -211,6 +217,7 @@ fitness(m1) {return 1.0;}
 5011: early() {
     if (p3.individualCount == 0) {
         catn("Population went extinct at generation: " + sim.generation);
+        sim.simulationFinished();
     }
     P3Iinds = p3.individuals;
     phenotypes = P3Iinds.sumOfMutationsOfType(m1);
@@ -226,6 +233,6 @@ fitness(m1) {return 1.0;}
 
 
 if (sim.generation % 100 == 0){
-catn(sim.generation + ": Mean phenotype == " + mean(phenotypes) + "Population Size: " + p3.inds);
+catn(sim.generation + ": Mean phenotype == " + mean(phenotypes) + "Population Size: " + p3.individuals);
 }
 }
