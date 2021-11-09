@@ -232,7 +232,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "M");
     p3.takeMigrants(c(FemaleP2Migrants, MaleP2Migrants));
-    catn(p3.individualCount);
+    catn("P3 population size: " + p3.individualCount);
     }
 // }
  
