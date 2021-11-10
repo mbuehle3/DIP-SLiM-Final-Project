@@ -143,21 +143,13 @@ reproduction(p3, "F") {
 fitness(m1,p1) {return 1.0;}
 
 1:5000 early() {
-<<<<<<< HEAD
-
-    P1Inds = sim.subpopulations.individuals;
-
-    P1Phenotypes = P1Inds.sumOfMutationsOfType(m1);
-=======
     // catn("Calculating phenotypes for the wild population");
     P1Individuals = sim.subpopulations.individuals;
     P1Phenotypes = P1Individuals.sumOfMutationsOfType(m1);
->>>>>>> 33e72d54c3ea9eaf86791ecc34387927a4458cac
     Optimum = Opt1;
     deviations = Optimum - P1Phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 1.0);
     adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // need to figure out why this is returning a whole list of values and not just a singleton 
-<<<<<<< HEAD
     // // catn(adaptation + "\n");
     P1Inds.fitnessScaling = 0.1 + adaptation * 0.9;
 
@@ -182,7 +174,6 @@ fitness(m1,p1) {return 1.0;}
     // if (sim.generation % 100 == 0){
     //     catn(sim.generation + ": Optimum Phenotype is: "+ Opt1 + ": Mean phenotype of wild population = " + mean(P1Phenotypes) + " Wild Population Size: " + p1.individualCount);
     // }
-=======
     // catn(adaptation + "\n");
     P1Individuals.fitnessScaling = 0.1 + adaptation * 0.9;
     P1Individuals.fitnessScaling = K / p1.individualCount;
@@ -192,16 +183,11 @@ fitness(m1,p1) {return 1.0;}
         cat("Wild Population Mean Heterozygosity = " + p1_heterozygosity + "\n");
         catn("\n"+ sim.generation + ": Optimum Phenotype: "+ Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + "\nWild Population Size: " + p1.individualCount);
     }
->>>>>>> 33e72d54c3ea9eaf86791ecc34387927a4458cac
 
     // if ((sim.generation-1) % 100 == 0) {
     // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
     // }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 33e72d54c3ea9eaf86791ecc34387927a4458cac
 // think about how to do the age structures
 
 // Noah - set up the OCIC breeding colony
