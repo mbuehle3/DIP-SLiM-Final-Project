@@ -149,7 +149,7 @@ fitness(m1,p1) {return 1.0;}
 	 p1_heterozygosity = calcHeterozygosity(p1.genomes);
     if (sim.generation % 100 == 0){
         cat("Wild Population Mean Heterozygosity = " + p1_heterozygosity + "\n");
-        catn("\n"+ sim.generation + ": Optimum Phenotype: "+ Opt1 + " | Mean phenotype of wild population : " + mean(P1Phenotypes) + "\nWild Population Size: " + p1.individualCount);
+        catn("\n"+ sim.generation + ": Optimum Phenotype: "+ Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + "\nWild Population Size: " + p1.individualCount);
     }
 
     // if ((sim.generation-1) % 100 == 0) {
@@ -266,7 +266,7 @@ fitness(m1,p3) {return 1.0;}
 if (sim.generation % 50 == 0){
 p4_heterozygosity = calcHeterozygosity(p4.genomes);
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
-catn(sim.generation + ": Optimum Phenotype for Re-introduced population is: " + Opt2 + ": Mean phenotype == " + mean(phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount);
+catn(sim.generation + ": Optimum Phenotype for Re-introduced population is: " + Opt2 + " | Mean phenotype: " + mean(phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount);
 catn("OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
 }
 }
