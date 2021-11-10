@@ -23,7 +23,7 @@ initialize() {
     // defineConstant("buttton", button);
     // defineConstant("m_12", 1e-4); // migration rate from subpop 1 to subpop 2
     // defineConstant("m_21", 1e-4); // migration rate from subpop 2 to subpop 1
-    defineConstant("N1", 50); // size of subpop1; wild Georgia Population 
+    defineConstant("N1", 500); // size of subpop1; wild Georgia Population 
     defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
     defineConstant("N3", 0); // size of subpop3: Re-introduced population
     defineConstant("Opt1", 5); // Phenotypic optimum
@@ -95,7 +95,7 @@ reproduction(p3, "F") {
 
 1 { 
     sim.addSubpop("p1", N1);
-    // p1.individuals.age = rdunif(N1, min=0, max=7);
+    p1.individuals.age = rdunif(N1, min=0, max=7);
     catn("Creating Wild Population of size " + N1);
 
 }   
@@ -137,19 +137,9 @@ reproduction(p3, "F") {
 fitness(m1,p1) {return 1.0;}
 
 1:5000 early() {
-    // CatAge <- p1
 
-    // P1Inds = sim.subpopulations.individuals;
+    P1Inds = sim.subpopulations.individuals;
 
-    P1Inds = p1.individuals;
-    catn(sim.generation + P1Inds.age);
-// Do some selection based on life stage mortalities
-    ages = P1Inds.age;
-    mortality = L[ages];
-    catn(L[ages]);
-    survival = 1 - mortality;
-    P1Inds.fitnessScaling = survival;
-// Doing some selection based on their QTLs
     P1Phenotypes = P1Inds.sumOfMutationsOfType(m1);
     Optimum = Opt1;
     deviations = Optimum - P1Phenotypes;
@@ -157,21 +147,33 @@ fitness(m1,p1) {return 1.0;}
     adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // need to figure out why this is returning a whole list of values and not just a singleton 
     // // catn(adaptation + "\n");
     P1Inds.fitnessScaling = 0.1 + adaptation * 0.9;
-    // P1Individuals.fitnessScaling = K / p1.individualCount;
-    if (sim.generation % 100 == 0){
-        catn(sim.generation + ": Optimum Phenotype is: "+ Opt1 + ": Mean phenotype of wild population = " + mean(P1Phenotypes) + " Wild Population Size: " + p1.individualCount);
-    }
+
+
+    // Do some selection based on life stage mortalities
+    ages = P1Inds.age;
+    catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
+    mortality = L[ages];
+    // catn(L[ages]);
+    survival = 1 - mortality;
+    P1Inds.fitnessScaling = survival;
+
+    ages = P1Inds.age;
+    P1Inds[ages >= 8].fitnessScaling = 0.0; 
+
+    p1.fitnessScaling = (K / (p1.individualCount));
+}
+
+// Doing some selection based on their QTLs
+
+    // P1Inds.fitnessScaling = K / p1.individualCount;
+    // if (sim.generation % 100 == 0){
+    //     catn(sim.generation + ": Optimum Phenotype is: "+ Opt1 + ": Mean phenotype of wild population = " + mean(P1Phenotypes) + " Wild Population Size: " + p1.individualCount);
+    // }
 
     // if ((sim.generation-1) % 100 == 0) {
     // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
     // }
-}
 
-1:5000 late() {
-    P1Inds = p1.individuals;
-    ages = P1Inds.age;
-    P1Inds[ages == 9].fitnessScaling = 0.0; 
-}
 
 // think about how to do the age structures
 
