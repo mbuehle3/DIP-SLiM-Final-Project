@@ -215,7 +215,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 
 5002 {
-    catn("Killed the wild population: " + p1.individualCount + " OCIC Breeding colony size: " + p2.individualCount);
+    catn("Killed the wild population: " + p1.individualCount + " | OCIC Breeding colony size: " + p2.individualCount);
 }    
 
 
@@ -229,7 +229,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
         // if (sim.generation % 100 == 0){
         // catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
     // p4.fitnessScaling = K2 / p4.individualCount;
-    catn("P4 population size: " + p4.individualCount);
+    catn("OCIC offspring population size: " + p4.individualCount);
     }
 
 // }
@@ -257,7 +257,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, age = 3, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, age = 3, sex = "M");
     p3.takeMigrants(c(FemaleP2Migrants, MaleP2Migrants));
-    catn(p3.individualCount);
+    catn("Reintroduced Population size: " + p3.individualCount);
     }
 // }
  
