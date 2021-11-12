@@ -23,27 +23,23 @@ initialize() {
     // defineConstant("buttton", button);
     // defineConstant("m_12", 1e-4); // migration rate from subpop 1 to subpop 2
     // defineConstant("m_21", 1e-4); // migration rate from subpop 2 to subpop 1
-<<<<<<< HEAD
     defineConstant("N1", 500); // size of subpop1; wild Georgia Population 
-=======
-    defineConstant("N1", 1000); // size of subpop1; wild Georgia Population 
->>>>>>> 33e72d54c3ea9eaf86791ecc34387927a4458cac
     defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
     defineConstant("N3", 0); // size of subpop3: Re-introduced population
     defineConstant("Opt1", 5); // Phenotypic optimum
     defineConstant("Opt2", -5); // Phenotypic optimum of the re-introduced population
-
+    defineConstant("L", c(0.7,0.0,0.0,0.0,0.25,0.5,0.75,1.0));
 }
 // Reproduction mechanics for the original wild p1 population   
-reproduction(p1) {
-	if (individual.sex == "F" & individual.age == 3) {
+reproduction(p1, "F") {
+	if (individual.age == 3) {
 		mate = subpop.sampleIndividuals(1, sex="M");
 		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
 		}
-		else if (individual.sex == "F" & individual.age >= 4) {
+		else if (individual.age >= 4) {
 		mate = subpop.sampleIndividuals(1, sex="M");
 		litterSize = rpois(1, 8); // same as above for litter range
 		for (i in seqLen(litterSize)){
@@ -141,8 +137,8 @@ fitness(m1,p1) {return 1.0;}
 
 1:5000 early() {
     // catn("Calculating phenotypes for the wild population");
-    P1Individuals = sim.subpopulations.individuals;
-    P1Phenotypes = P1Individuals.sumOfMutationsOfType(m1);
+    P1Inds = p1.individuals;
+    P1Phenotypes = P1Inds.sumOfMutationsOfType(m1);
     Optimum = Opt1;
     deviations = Optimum - P1Phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 1.0);
@@ -172,14 +168,14 @@ fitness(m1,p1) {return 1.0;}
     //     catn(sim.generation + ": Optimum Phenotype is: "+ Opt1 + ": Mean phenotype of wild population = " + mean(P1Phenotypes) + " Wild Population Size: " + p1.individualCount);
     // }
     // catn(adaptation + "\n");
-    P1Individuals.fitnessScaling = 0.1 + adaptation * 0.9;
-    P1Individuals.fitnessScaling = K / p1.individualCount;
-    // Print mean heterozygosity across the population
-	 p1_heterozygosity = calcHeterozygosity(p1.genomes);
-    if (sim.generation % 100 == 0){
-        cat("Wild Population Mean Heterozygosity = " + p1_heterozygosity + "\n");
-        catn("\n"+ sim.generation + ": Optimum Phenotype: "+ Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + "\nWild Population Size: " + p1.individualCount);
-    }
+    // P1Individuals.fitnessScaling = 0.1 + adaptation * 0.9;
+    // P1Individuals.fitnessScaling = K / p1.individualCount;
+    // // Print mean heterozygosity across the population
+	//  p1_heterozygosity = calcHeterozygosity(p1.genomes);
+    // if (sim.generation % 100 == 0){
+    //     cat("Wild Population Mean Heterozygosity = " + p1_heterozygosity + "\n");
+    //     catn("\n"+ sim.generation + ": Optimum Phenotype: "+ Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + "\nWild Population Size: " + p1.individualCount);
+    // }
 
     // if ((sim.generation-1) % 100 == 0) {
     // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
