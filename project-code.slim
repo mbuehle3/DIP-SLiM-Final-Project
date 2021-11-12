@@ -17,7 +17,7 @@ initialize() {
     m1.convertToSubstitution = F;
     initializeGenomicElementType("g1", m1, 1.0);
     initializeGenomicElement(g1, 0, 99999);
-    initializeMutationRate(1e-7); //  are  these rates for the indigo snake, or are they from the original script? -C
+    initializeMutationRate(5e-4); //  are  these rates for the indigo snake, or are they from the original script? -C
     initializeRecombinationRate(5e-8);
     initializeSex("A");
     // defineConstant("buttton", button);
@@ -26,8 +26,8 @@ initialize() {
     defineConstant("N1", 500); // size of subpop1; wild Georgia Population 
     defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
     defineConstant("N3", 0); // size of subpop3: Re-introduced population
-    defineConstant("Opt1", 5); // Phenotypic optimum
-    defineConstant("Opt2", -5); // Phenotypic optimum of the re-introduced population
+    defineConstant("Opt1", 10); // Phenotypic optimum
+    defineConstant("Opt2", -10); // Phenotypic optimum of the re-introduced population
     defineConstant("L", c(0.7,0.0,0.0,0.0,0.25,0.5,0.75,1.0));
 }
 // Reproduction mechanics for the original wild p1 population   
@@ -149,11 +149,13 @@ fitness(m1,p1) {return 1.0;}
 
     // Do some selection based on life stage mortalities
     ages = P1Inds.age;
-    catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
+    p1_heterozygosity = calcHeterozygosity(p1.genomes);
+    catn(sim.generation + " Mean Age: " + mean(ages) + " Oldest Age:" + max(ages) + ": " + p1.individualCount + " | Wild Pop Mean Heterozygosity:" + p1_heterozygosity);
     mortality = L[ages];
     // catn(L[ages]);
     survival = 1 - mortality;
     P1Inds.fitnessScaling = survival;
+    
 
     ages = P1Inds.age;
     P1Inds[ages >= 8].fitnessScaling = 0.0; 
