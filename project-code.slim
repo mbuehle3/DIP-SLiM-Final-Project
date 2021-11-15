@@ -150,7 +150,9 @@ fitness(m1,p1) {return 1.0;}
     // Do some selection based on life stage mortalities
     ages = P1Inds.age;
     p1_heterozygosity = calcHeterozygosity(p1.genomes);
-    catn(sim.generation + " Mean Age: " + mean(ages) + " Oldest Age:" + max(ages) + ": " + p1.individualCount + " | Wild Pop Mean Heterozygosity:" + p1_heterozygosity);
+    if (sim.generation % 50 == 0){
+    	catn(sim.generation + " | Mean Age: " + mean(ages) + " | Oldest Age:" + max(ages) + " | Optimum Phenotype is: " + Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + p1.individualCount + " | Wild Pop Mean Heterozygosity: " + p1_heterozygosity + " | Wild Population Size: " + p1.individualCount + "\n");
+}
     mortality = L[ages];
     // catn(L[ages]);
     survival = 1 - mortality;
@@ -166,9 +168,7 @@ fitness(m1,p1) {return 1.0;}
 // Doing some selection based on their QTLs
 
     // P1Inds.fitnessScaling = K / p1.individualCount;
-    // if (sim.generation % 100 == 0){
-    //     catn(sim.generation + ": Optimum Phenotype is: "+ Opt1 + ": Mean phenotype of wild population = " + mean(P1Phenotypes) + " Wild Population Size: " + p1.individualCount);
-    // }
+     
     // catn(adaptation + "\n");
     // P1Individuals.fitnessScaling = 0.1 + adaptation * 0.9;
     // P1Individuals.fitnessScaling = K / p1.individualCount;
@@ -276,7 +276,14 @@ fitness(m1,p3) {return 1.0;}
         catn("Population went extinct at generation: " + sim.generation);
         sim.simulationFinished();
     }
-    P3Iinds = p3.individuals;
+    P3Inds = p3.individuals;
+	
+	 p3_ages = P3Inds.age;
+    mortality = L[p3_ages];
+    survival = 1 - mortality;
+    P3Inds.fitnessScaling = survival;
+    P3Inds[p3_ages >= 8].fitnessScaling = 0.0;  
+    
     phenotypes = P3Iinds.sumOfMutationsOfType(m1);
     optimum2 = Opt2;
     deviations = optimum2 - phenotypes;
