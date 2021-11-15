@@ -136,20 +136,18 @@ reproduction(p3, "F") {
 fitness(m1,p1) {return 1.0;}
 
 1:5000 early() {
-    // catn("Calculating phenotypes for the wild population");
+
+// catn("Calculating phenotypes for the wild population");
     P1Inds = p1.individuals;
     P1Phenotypes = P1Inds.sumOfMutationsOfType(m1);
     Optimum = Opt1;
     deviations = Optimum - P1Phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 1.0);
     adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // need to figure out why this is returning a whole list of values and not just a singleton 
-    // // catn(adaptation + "\n");
     P1Inds.fitnessScaling = 0.1 + adaptation * 0.9;
 
-
-    // Do some selection based on life stage mortalities
+// Do some selection based on life stage mortalities
     ages = P1Inds.age;
-    catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
     mortality = L[ages];
     // catn(L[ages]);
     survival = 1 - mortality;
@@ -159,28 +157,11 @@ fitness(m1,p1) {return 1.0;}
     P1Inds[ages >= 8].fitnessScaling = 0.0; 
 
     p1.fitnessScaling = (K / (p1.individualCount));
+    if (sim.generation % 100 == 0 ) {
+    catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
+    }
+    
 }
-
-// Doing some selection based on their QTLs
-
-    // P1Inds.fitnessScaling = K / p1.individualCount;
-    // if (sim.generation % 100 == 0){
-    //     catn(sim.generation + ": Optimum Phenotype is: "+ Opt1 + ": Mean phenotype of wild population = " + mean(P1Phenotypes) + " Wild Population Size: " + p1.individualCount);
-    // }
-    // catn(adaptation + "\n");
-    // P1Individuals.fitnessScaling = 0.1 + adaptation * 0.9;
-    // P1Individuals.fitnessScaling = K / p1.individualCount;
-    // // Print mean heterozygosity across the population
-	//  p1_heterozygosity = calcHeterozygosity(p1.genomes);
-    // if (sim.generation % 100 == 0){
-    //     cat("Wild Population Mean Heterozygosity = " + p1_heterozygosity + "\n");
-    //     catn("\n"+ sim.generation + ": Optimum Phenotype: "+ Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + "\nWild Population Size: " + p1.individualCount);
-    // }
-
-    // if ((sim.generation-1) % 100 == 0) {
-    // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
-    // }
-
 // think about how to do the age structures
 
 // Noah - set up the OCIC breeding colony
@@ -284,12 +265,12 @@ fitness(m1,p3) {return 1.0;}
     P3Iinds.tagF = phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = K / p3.individualCount;
-
+    p4_heterozygosity = calcHeterozygosity(p4.genomes);
+    p3_heterozygosity = calcHeterozygosity(p3.genomes);
 
 
 if (sim.generation % 50 == 0){
-p4_heterozygosity = calcHeterozygosity(p4.genomes);
-p3_heterozygosity = calcHeterozygosity(p3.genomes);
+
 catn(sim.generation + ": Optimum Phenotype for Re-introduced population is: " + Opt2 + " | Mean phenotype: " + mean(phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount);
 catn("OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
 }
