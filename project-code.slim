@@ -17,7 +17,7 @@ initialize() {
     m1.convertToSubstitution = F;
     initializeGenomicElementType("g1", m1, 1.0);
     initializeGenomicElement(g1, 0, 99999);
-    initializeMutationRate(5e-4); //  are  these rates for the indigo snake, or are they from the original script? -C
+    initializeMutationRate(1e-6); //  are  these rates for the indigo snake, or are they from the original script? -C
     initializeRecombinationRate(5e-8);
     initializeSex("A");
     // defineConstant("buttton", button);
@@ -136,42 +136,31 @@ reproduction(p3, "F") {
 fitness(m1,p1) {return 1.0;}
 
 1:5000 early() {
-
-// catn("Calculating phenotypes for the wild population");
+    // catn("Calculating phenotypes for the wild population");
     P1Inds = p1.individuals;
     P1Phenotypes = P1Inds.sumOfMutationsOfType(m1);
     Optimum = Opt1;
     deviations = Optimum - P1Phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 1.0);
     adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // need to figure out why this is returning a whole list of values and not just a singleton 
+    // // catn(adaptation + "\n");
     P1Inds.fitnessScaling = 0.1 + adaptation * 0.9;
 
-// Do some selection based on life stage mortalities
+
+    // Do some selection based on life stage mortalities
     ages = P1Inds.age;
-<<<<<<< HEAD
-=======
     p1_heterozygosity = calcHeterozygosity(p1.genomes);
     if (sim.generation % 50 == 0){
     	catn(sim.generation + " | Mean Age: " + mean(ages) + " | Oldest Age:" + max(ages) + " | Optimum Phenotype is: " + Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + p1.individualCount + " | Wild Pop Mean Heterozygosity: " + p1_heterozygosity + " | Wild Population Size: " + p1.individualCount + "\n");
 }
->>>>>>> bc9911090c32650e11ef6779337c9788c1e6061d
     mortality = L[ages];
     // catn(L[ages]);
     survival = 1 - mortality;
     P1Inds.fitnessScaling = survival;
-    
-
-    ages = P1Inds.age;
     P1Inds[ages >= 8].fitnessScaling = 0.0; 
 
     p1.fitnessScaling = (K / (p1.individualCount));
-    if (sim.generation % 100 == 0 ) {
-    catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
-    }
-    
 }
-<<<<<<< HEAD
-=======
 
 // Doing some selection based on their QTLs
 
@@ -191,7 +180,6 @@ fitness(m1,p1) {return 1.0;}
     // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
     // }
 
->>>>>>> bc9911090c32650e11ef6779337c9788c1e6061d
 // think about how to do the age structures
 
 // Noah - set up the OCIC breeding colony
@@ -221,7 +209,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     catn("Gathered males");
     p2.takeMigrants(c(FemaleN1Migrations, MaleN1Migrations)); //Takes migrants from p1 and puts into p2
     p2.individuals.tag = 1;
-    catn(p2.individualCount);
+    catn(p2.individualCount + "\n");
     p1.fitnessScaling = 0;
 }
 
@@ -236,13 +224,14 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 5000:5032 {
     // catn("Starting to breed snakes");
     // catn("POpulation of the OCIC Breeding colony: " + p2.individualCount);
-    P2Phenotype = p2.individuals.sumOfMutationsOfType(m1);
+    P4Phenotype = p4.individuals.sumOfMutationsOfType(m1);
     // p2.fitnessScaling = K2 / p2.individualCount;
     // catn(sim.generation + ": OCIC colony size = " + p2.individualCount + ": Mean phenotype at the OCIC: " + mean(P2Phenotype));
         // if (sim.generation % 100 == 0){
         // catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
     // p4.fitnessScaling = K2 / p4.individualCount;
-    catn(sim.generation + ": OCIC Offspring Population Size: " + p4.individualCount);	 
+    catn(sim.generation + ": OCIC Offspring Population Size: " + p4.individualCount + " | OCIC Offspring Mean Phenotype: " + mean(P4Phenotype));	 
+
 }
 
 // }
@@ -265,12 +254,17 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 // need to set up the migration block to pull 30 individuals from the OCIC population
 // Make sure the 30 individuals pulled are individual.tag == 0 (so they are offspring and not breeders)
 // In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
-	P2Migrants = 12;
+	 	
+	 P2Migrants = 12;
     // p2.Individuals = sum(p2.individualCount);
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "M");
     p3.takeMigrants(c(FemaleP2Migrants, MaleP2Migrants));
     catn("Reintroduced Population size: " + p3.individualCount + "\n");
+    
+    P4Inds = p4.individuals;
+	 P4_ages = P4Inds.age;
+    P4Inds[P4_ages >= 7].fitnessScaling = 0.0;
     }
 // }
  
@@ -280,35 +274,48 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 fitness(m1,p3) {return 1.0;}
 
-5011:5600 {
+5011:5600 early() {
+	 P3Inds = p3.individuals;
+	 P3_ages = P3Inds.age;
+    P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
+    p4_heterozygosity = calcHeterozygosity(p4.genomes);
+    if (sim.generation % 50 == 0) {
+    	catn(sim.generation + " | OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity);
+}
+}
+
+5011:5600 late() {   
+	 
     if (p3.individualCount == 0) {
         catn("Population went extinct at generation: " + sim.generation);
         sim.simulationFinished();
     }
     P3Inds = p3.individuals;
-	
-	 p3_ages = P3Inds.age;
-    mortality = L[p3_ages];
-    survival = 1 - mortality;
+	 P3_ages = P3Inds.age;
+	 //catn(sim.generation + " | P3_ages: " + P3_ages);
+	 //P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
+    P3_mortality = L[P3_ages];
+    survival = 1 - P3_mortality;
     P3Inds.fitnessScaling = survival;
-    P3Inds[p3_ages >= 8].fitnessScaling = 0.0;  
+       
     
-    phenotypes = P3Iinds.sumOfMutationsOfType(m1);
+      
+    
+    phenotypes = P3Inds.sumOfMutationsOfType(m1);
     optimum2 = Opt2;
     deviations = optimum2 - phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 1.0);
     adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // may not need this. What purpose does adding in the adaptation serve.
-    P3Iinds.fitnessScaling = 0.1 + adaptation * 0.9;
-    P3Iinds.tagF = phenotypes; // just for output below
+    P3Inds.fitnessScaling = 0.1 + adaptation * 0.9;
+    P3Inds.tagF = phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = K / p3.individualCount;
-    p4_heterozygosity = calcHeterozygosity(p4.genomes);
-    p3_heterozygosity = calcHeterozygosity(p3.genomes);
+
 
 
 if (sim.generation % 50 == 0){
-
-catn(sim.generation + ": Optimum Phenotype for Re-introduced population is: " + Opt2 + " | Mean phenotype: " + mean(phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount);
-catn("OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
+//p4_heterozygosity = calcHeterozygosity(p4.genomes);
+p3_heterozygosity = calcHeterozygosity(p3.genomes);
+catn(sim.generation + " | Optimum Phenotype for Re-introduced Population: " + Opt2 + " | Mean phenotype: " + mean(phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
 }
 }
