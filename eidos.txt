@@ -1,0 +1,3 @@
+fitnessMax = dnorm(0.0, 0.0, 0.5);
+adaptation = dnorm(0.0, 0, 0.5) / fitnessMax;
+catn(0.1+adaptation*0.9 + " :" + adaptation);
