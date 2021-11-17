@@ -133,7 +133,7 @@ reproduction(p3, "F") {
 // Casey start writing code to get the wild population cooking
 // Think about output and if you can get a file recording output, great, if not we can figure Wednesday
 
-fitness(NULL) {return 1.0;}
+fitness(m1,p1) {return 1.0;}
 
 1:5000 {
     // catn("Calculating phenotypes for the wild population");
@@ -142,9 +142,9 @@ fitness(NULL) {return 1.0;}
     P1Phenotypes = P1Inds.sumOfMutationsOfType(m1);
     Optimum_1 = Opt1;
     deviations_1 = Optimum_1 - P1Phenotypes;
-    fitnessFunctionMax_1 = dnorm(0.0, 0.0, 5.0);
-    adaptation_1 = dnorm(deviations_1, 0.0, 5.0) / fitnessFunctionMax_1; // need to figure out why this is returning a whole list of values and not just a singleton 
-    // P1Inds.fitnessScaling = 0.1 + adaptation_1 * 0.9;
+    fitnessFunctionMax_1 = dnorm(0.0, 0.0, 1.0);
+    adaptation_1 = dnorm(deviations_1, 0.0, 1.0) / fitnessFunctionMax_1; // need to figure out why this is returning a whole list of values and not just a singleton 
+    QTL_1 =  0.1 + adaptation_1 * 0.9;
 
 
     // Do some selection based on life stage mortalities
@@ -156,7 +156,7 @@ fitness(NULL) {return 1.0;}
     mortality = L[ages];
     // catn(L[ages]);
     survival = 1 - mortality;
-    P1Inds.fitnessScaling = survival * adaptation_1;
+    P1Inds.fitnessScaling = survival * QTL_1;
     P1Inds[ages >= 8].fitnessScaling = 0.0; 
 
     p1.fitnessScaling = (K / (p1.individualCount));
@@ -260,7 +260,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 // Make sure the 30 individuals pulled are individual.tag == 0 (so they are offspring and not breeders)
 // In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
 	 	
-	 P2Migrants = 12;
+	P2Migrants = 12;
     // p2.Individuals = sum(p2.individualCount);
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "M");
@@ -306,13 +306,13 @@ fitness(m1,p3) {return 1.0;}
     
       
     
-    phenotypes = P3Inds.sumOfMutationsOfType(m1);
+    P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
     optimum2 = Opt2;
-    deviations = optimum2 - phenotypes;
+    deviations = optimum2 - P3phenotypes;
     fitnessFunctionMax = dnorm(0.0, 0.0, 5.0); // dnorm(quantiles, mean, sd)
-    adaptation = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // may not need this. What purpose does adding in the adaptation serve.
-    P3Inds.fitnessScaling = 0.1 + adaptation * 0.9;
-    P3Inds.tagF = phenotypes; // just for output below
+    adaptation_3 = dnorm(deviations, 0.0, 5.0) / fitnessFunctionMax; // may not need this. What purpose does adding in the adaptation serve.
+    P3Inds.fitnessScaling = 0.1 + adaptation_3 * 0.9;
+    P3Inds.tagF = P3phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = K / p3.individualCount;
 
