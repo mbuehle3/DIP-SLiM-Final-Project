@@ -6,6 +6,20 @@
 // git commit -m "meaningful message"
 // git push
 
+// Variables we will manipulate::
+//
+// sex ratio of introduced snakes
+// Total release number
+// Rate of release
+// Number of source populations 
+// Duration of release
+
+// Variables to track::
+// Fitness
+// Genetic Diversity
+// Population size
+// Extinction (How often does it happen and when)
+
  //SLiM model of evolutionary Rescue
 initialize() {
     initializeSLiMModelType("nonWF");
@@ -48,7 +62,7 @@ reproduction(p1, "F") {
 		}	
 	}
 
-// Reproduction mechanics for the OCIC p2 population (page 390) -> Breeding individuals must have breeder tag ==1   
+// Reproduction mechanics for the OCIC p2 population
 reproduction(p2, 'F'){
 		// If individual is in p2 and does NOT have breeder ==1 tag (aka offspring), then individual doesn't mate
 		if (individual.age == 3) {
@@ -69,7 +83,6 @@ reproduction(p2, 'F'){
             //     subpop = p4;
             // };
                 }
-	//Create if statement to stop p2 offspring from mating, create offpsring tag down for p2 offspring	
 	}
 }
 		
@@ -99,39 +112,6 @@ reproduction(p3, "F") {
 
 }   
 
-// TO DO LIST::
-//
-// Add in something cool about survivability over time (age classes)
-// Kill snakes in the first year look into the acclimation effect from Folt et al. (2019)
-// Kill GA population
-// 
-
-// Variables we will manipulate::
-//
-// sex ratio of introduced snakes
-// Total release number
-// Rate of release
-// Number of source populations 
-// Duration of release
-
-// Variables to track::
-// Fitness
-// Genetic Diversity
-// Population size
-// Extinction (How often does it happen and when)
-// 
-//
-
-
-
-
-//
-// think about output to track for the wild subpopulation
-// fitness, genotypes,
-
-
-// Casey start writing code to get the wild population cooking
-// Think about output and if you can get a file recording output, great, if not we can figure Wednesday
 
 fitness(m1,p1) {return 1.0;}
 
@@ -184,8 +164,6 @@ fitness(m1,p1) {return 1.0;}
     // if ((sim.generation-1) % 100 == 0) {
     // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
     // }
-
-// think about how to do the age structures
 
 // Noah - set up the OCIC breeding colony
 // Draws 40 random individuals from subpop p1, the original'wild' population
@@ -256,9 +234,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 
 5011:5021 early() {
-// need to set up the migration block to pull 30 individuals from the OCIC population
-// Make sure the 30 individuals pulled are individual.tag == 0 (so they are offspring and not breeders)
-// In theory this block will remove 15 males and 15 females from the OCIC population and migrate them into p3
+// This block will remove 15 males and 15 females from the OCIC population and migrate them into p3
 	 	
 	P2Migrants = 12;
     // p2.Individuals = sum(p2.individualCount);
@@ -271,11 +247,6 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 	 P4_ages = P4Inds.age;
     P4Inds[P4_ages >= 7].fitnessScaling = 0.0;
     }
-// }
- 
-// 5012 {
-//     catn(p3.individualCount);
-// }
 
 fitness(m1,p3) {return 1.0;}
 
