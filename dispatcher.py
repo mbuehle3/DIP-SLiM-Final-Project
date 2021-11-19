@@ -2,7 +2,7 @@ import numpy as np
 import subprocess
 import time
 
-reps = 10
+reps = 1
 capture = [20,30,40,50,100]
 release = [10,15,20,25,30]
 

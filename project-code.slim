@@ -144,7 +144,7 @@ fitness(m1,p1) {return 1.0;}
     if (sim.generation % 100 == 0 ) {
     // catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
     }
-    
+    writeFile("project-dip.csv", paste(c(p1_heterozygosity,"1"),sep=','), append=T);
 }
 
 
@@ -214,7 +214,8 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
         // if (sim.generation % 100 == 0){
         // catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
     // p4.fitnessScaling = K2 / p4.individualCount;
-    catn(sim.generation + ": OCIC Offspring Population Size: " + p4.individualCount + " | OCIC Offspring Mean Phenotype: " + mean(P4Phenotype));	 
+    catn(sim.generation + ": OCIC Offspring Population Size: " + p4.individualCount + " | OCIC Offspring Mean Phenotype: " + mean(P4Phenotype));
+        writeFile("project-dip.csv", paste(c(,"1"),sep=','), append=T);
 
 }
 
@@ -237,7 +238,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 5011:5021 early() {
 // This block will remove 15 males and 15 females from the OCIC population and migrate them into p3
 	 	
-	released = 12;
+	P2Migrants= released;
     // p2.Individuals = sum(p2.individualCount);
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "M");
