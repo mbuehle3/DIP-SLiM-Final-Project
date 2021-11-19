@@ -11,7 +11,6 @@ initialize() {
     initializeSLiMModelType("nonWF");
     defineConstant("K", 1000); // carrying capacity for the wild population
     defineConstant("K2", 40);
-    defineConstant("Tdelta", 5000);
     // m1 QTL -> Draws its select coef from norm distrib. w/ mean 0.0 and std dev 1.0
     initializeMutationType("m1", 0.0, "n", 0.0, 1.0); 
     m1.convertToSubstitution = F;
