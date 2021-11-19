@@ -42,6 +42,8 @@ initialize() {
     defineConstant("Opt1", 10); // Phenotypic optimum
     defineConstant("Opt2", -10); // Phenotypic optimum of the re-introduced population
     defineConstant("L", c(0.7,0.0,0.0,0.0,0.25,0.5,0.75,1.0));
+    defineConstant("captured", capture);
+    defineConstant("released", release);
 }
 // Reproduction mechanics for the original wild p1 population   
 reproduction(p1, "F") {
@@ -181,7 +183,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 5000 late() {    
     catn("Taking individuals to seed the OCIC Breeding colony");
-    N1Migrants = 20; // May need to change the migrant p's to n's if doesn't track
+    N1Migrants = captured; // May need to change the migrant p's to n's if doesn't track
     // p2.Individuals = sum(p2.individualCount);
     FemaleN1Migrations = p1.sampleIndividuals(N1Migrants, sex = "F", minAge = 3);
     // FemaleN1Migrations.tag = 1;
@@ -235,7 +237,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 5011:5021 early() {
 // This block will remove 15 males and 15 females from the OCIC population and migrate them into p3
 	 	
-	P2Migrants = 12;
+	released = 12;
     // p2.Individuals = sum(p2.individualCount);
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "M");
