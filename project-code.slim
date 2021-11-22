@@ -107,6 +107,7 @@ reproduction(p3, "F") {
 
 
 1 { 
+    writeFile(paste(c("output/results-",captured,"-",released,".csv"), sep = ""), paste(c(captured, released,"\n","pop-id","pop-size", "hetero.", "mean-phenotype", "optimal-phenotype")));
     sim.addSubpop("p1", N1);
     p1.individuals.age = rdunif(N1, min=0, max=7);
     catn("Creating Wild Population of size " + N1);
@@ -144,7 +145,7 @@ fitness(m1,p1) {return 1.0;}
     if (sim.generation % 100 == 0 ) {
     // catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
     }
-    writeFile("project-dip.csv", paste(c("p1", p1.individualCount , p1_heterozygosity, mean(P1Phenotypes), Optimum_1),sep=','), append=T);
+    writeFile(paste(c("output/results-",captured,"-",released,".csv"), sep = ""), paste(c(sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
 }
 
 
