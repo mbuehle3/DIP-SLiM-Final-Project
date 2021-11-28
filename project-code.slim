@@ -109,8 +109,9 @@ reproduction(p3, "F") {
 
 
 1 { 
-    writeFile(paste(c("output/", captured,"-",released,"-",Opt1,"-p1-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
-     writeFile(paste(c("output/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
+    createDirectory(paste(c("output/",replicates),sep=""));
+    writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-p1-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
+    writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
     sim.addSubpop("p1", N1);
     p1.individuals.age = rdunif(N1, min=0, max=7);
     catn("Creating Wild Population of size " + N1);
@@ -148,7 +149,7 @@ fitness(m1,p1) {return 1.0;}
     if (sim.generation % 100 == 0 ) {
     // catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
     }
-    writeFile(paste(c("output/",captured,"-",released,"-",Opt1,"-p1-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
+    writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-p1-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
 }
 
 
@@ -267,7 +268,7 @@ fitness(m1,p3) {return 1.0;}
 P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
 optimum2 = Opt2;
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
-writeFile(paste(c("output/",captured,"-",released,"-", Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
+writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
 }
 
 5011:5600 late() {   
@@ -302,5 +303,5 @@ p3_heterozygosity = calcHeterozygosity(p3.genomes);
 catn(sim.generation + " | Optimum Phenotype for Re-introduced Population: " + Opt2 + " | Mean phenotype: " + mean(P3phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
 }
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
-writeFile(paste(c("output/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
+writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
 }
