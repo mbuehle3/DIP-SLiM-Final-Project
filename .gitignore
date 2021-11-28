@@ -1,4 +1,4 @@
-media-output/*.jpg
+output-media/*.jpg
 *.aux
 *.fdb_latexmk
 *.log
