@@ -15,7 +15,7 @@ mix_list = []
 for i in range(reps):
     for c in capture:
         for r in release:
-            lug = "slim -d ru=%i -d capture=%s -d release=%s  project-code.slim" % (i, c, r)
+            lug = "slim -d replicate=%s -d capture=%s -d release=%s  project-code.slim" % (i, c, r)
             process_list.append(subprocess.Popen(lug, shell=True))
 
 for proc in process_list:

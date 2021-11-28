@@ -44,6 +44,7 @@ initialize() {
     defineConstant("L", c(0.7,0.0,0.0,0.0,0.25,0.5,0.75,1.0));
     defineConstant("captured", capture);
     defineConstant("released", release);
+    defineConstant("replicates", replicate);
 }
 // Reproduction mechanics for the original wild p1 population   
 reproduction(p1, "F") {
@@ -107,7 +108,8 @@ reproduction(p3, "F") {
 
 
 1 { 
-    writeFile(paste(c("output/results-",captured,"-",released,".csv"), sep = ""), paste(c(captured, released,"\n","pop-id","pop-size", "hetero.", "mean-phenotype", "optimal-phenotype")));
+    writeFile(paste(c("output/",captured,"-",released,"-p1-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
+     writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
     sim.addSubpop("p1", N1);
     p1.individuals.age = rdunif(N1, min=0, max=7);
     catn("Creating Wild Population of size " + N1);
@@ -145,7 +147,7 @@ fitness(m1,p1) {return 1.0;}
     if (sim.generation % 100 == 0 ) {
     // catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
     }
-    writeFile(paste(c("output/results-",captured,"-",released,".csv"), sep = ""), paste(c(sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
+    writeFile(paste(c("output/",captured,"-",released,"-p1-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
 }
 
 
@@ -208,7 +210,7 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 // something messy is going on here that is bogging down the script
 5000:5032 {
     // catn("Starting to breed snakes");
-    // catn("POpulation of the OCIC Breeding colony: " + p2.individualCount);
+    // catn("Population of the OCIC Breeding colony: " + p2.individualCount);
     P4Phenotype = p4.individuals.sumOfMutationsOfType(m1);
     // p2.fitnessScaling = K2 / p2.individualCount;
     // catn(sim.generation + ": OCIC colony size = " + p2.individualCount + ": Mean phenotype at the OCIC: " + mean(P2Phenotype));
@@ -254,13 +256,17 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 fitness(m1,p3) {return 1.0;}
 
 5011:5600 early() {
-	 P3Inds = p3.individuals;
-	 P3_ages = P3Inds.age;
+	P3Inds = p3.individuals;
+	P3_ages = P3Inds.age;
     P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
     p4_heterozygosity = calcHeterozygosity(p4.genomes);
     if (sim.generation % 50 == 0) {
     	catn(sim.generation + " | OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity);
 }
+P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
+optimum2 = Opt2;
+p3_heterozygosity = calcHeterozygosity(p3.genomes);
+writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
 }
 
 5011:5600 late() {   
@@ -289,12 +295,11 @@ fitness(m1,p3) {return 1.0;}
     P3Inds.tagF = P3phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = K / p3.individualCount;
-
-
-
 if (sim.generation % 50 == 0){
 //p4_heterozygosity = calcHeterozygosity(p4.genomes);
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
 catn(sim.generation + " | Optimum Phenotype for Re-introduced Population: " + Opt2 + " | Mean phenotype: " + mean(P3phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
 }
+p3_heterozygosity = calcHeterozygosity(p3.genomes);
+writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
 }
