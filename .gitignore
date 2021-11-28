@@ -1,4 +1,5 @@
 output-media/*.jpg
+output-media/p3
 *.aux
 *.fdb_latexmk
 *.log
