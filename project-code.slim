@@ -109,7 +109,7 @@ reproduction(p3, "F") {
 
 1 { 
     writeFile(paste(c("output/",captured,"-",released,"-p1-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
-     writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
+    writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
     sim.addSubpop("p1", N1);
     p1.individuals.age = rdunif(N1, min=0, max=7);
     catn("Creating Wild Population of size " + N1);
