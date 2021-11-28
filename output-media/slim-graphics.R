@@ -1,10 +1,15 @@
+setwd("output-media/")
 setwd("../output/")
 getwd()
+dir <- getwd()
 
 output <- read.csv("results-20-10.csv", header = TRUE)
 output
 
+
 head(output)
+
+
 
 par(mfrow=c(3,1))
 
