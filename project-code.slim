@@ -39,13 +39,14 @@ initialize() {
     defineConstant("N1", 500); // size of subpop1; wild Georgia Population 
     defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
     defineConstant("N3", 0); // size of subpop3: Re-introduced population
-    defineConstant("Opt1", 10); // Phenotypic optimum
-    defineConstant("Opt2", -10); // Phenotypic optimum of the re-introduced population
+    defineConstant("Opt1", optimum); // Phenotypic optimum
+    defineConstant("Opt2", -1*(optimum)); // Phenotypic optimum of the re-introduced population
     defineConstant("L", c(0.7,0.0,0.0,0.0,0.25,0.5,0.75,1.0));
     defineConstant("captured", capture);
     defineConstant("released", release);
     defineConstant("replicates", replicate);
 }
+
 // Reproduction mechanics for the original wild p1 population   
 reproduction(p1, "F") {
 	if (individual.age == 3) {
@@ -108,8 +109,8 @@ reproduction(p3, "F") {
 
 
 1 { 
-    writeFile(paste(c("output/",captured,"-",released,"-p1-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
-    writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
+    writeFile(paste(c("output/", captured,"-",released,"-",Opt1,"-p1-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
+     writeFile(paste(c("output/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c("replicate","gen","pop-id","pop-size", "hetero", "mean-phenotype", "optimal-phenotype"),sep = ","));
     sim.addSubpop("p1", N1);
     p1.individuals.age = rdunif(N1, min=0, max=7);
     catn("Creating Wild Population of size " + N1);
@@ -147,7 +148,7 @@ fitness(m1,p1) {return 1.0;}
     if (sim.generation % 100 == 0 ) {
     // catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
     }
-    writeFile(paste(c("output/",captured,"-",released,"-p1-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
+    writeFile(paste(c("output/",captured,"-",released,"-",Opt1,"-p1-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
 }
 
 
@@ -266,7 +267,7 @@ fitness(m1,p3) {return 1.0;}
 P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
 optimum2 = Opt2;
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
-writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
+writeFile(paste(c("output/",captured,"-",released,"-", Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
 }
 
 5011:5600 late() {   
@@ -301,5 +302,5 @@ p3_heterozygosity = calcHeterozygosity(p3.genomes);
 catn(sim.generation + " | Optimum Phenotype for Re-introduced Population: " + Opt2 + " | Mean phenotype: " + mean(P3phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
 }
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
-writeFile(paste(c("output/",captured,"-",released,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
+writeFile(paste(c("output/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
 }
