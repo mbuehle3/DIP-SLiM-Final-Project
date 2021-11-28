@@ -1,4 +1,4 @@
-setwd("output/")
+setwd("/Users/noahbevers/Documents/Practical Evolution 7230/DIP Practical Evolution Project/DIP Final Project/DIP-SLiM-Final-Project/output")
 getwd()
 dir <- getwd()
 # dir

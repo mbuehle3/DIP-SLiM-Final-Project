@@ -92,14 +92,14 @@ reproduction(p2, 'F'){
 reproduction(p3, "F") {
 	if (individual.age == 3) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 2); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
+		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
 		}
 		else if (individual.age >= 4) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 3); // same as above for litter range
+		litterSize = rpois(1, 8); // same as above for litter range
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
