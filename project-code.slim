@@ -251,57 +251,49 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     catn("Reintroduced Population size: " + p3.individualCount + "\n");
     
     P4Inds = p4.individuals;
-	 P4_ages = P4Inds.age;
+	P4_ages = P4Inds.age;
     P4Inds[P4_ages >= 7].fitnessScaling = 0.0;
     }
 
 fitness(m1,p3) {return 1.0;}
 
-5011:5600 early() {
-	P3Inds = p3.individuals;
-	P3_ages = P3Inds.age;
-    P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
-    p4_heterozygosity = calcHeterozygosity(p4.genomes);
-    if (sim.generation % 50 == 0) {
-    	catn(sim.generation + " | OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity);
-}
-P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
-optimum2 = Opt2;
-p3_heterozygosity = calcHeterozygosity(p3.genomes);
-writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
-}
+5011:5600 {
 
-5011:5600 late() {   
-	 
+//     p4_heterozygosity = calcHeterozygosity(p4.genomes);
+// //     if (sim.generation % 50 == 0) {
+//     	catn(sim.generation + " | OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity);
+// }
     if (p3.individualCount == 0) {
         catn("Population went extinct at generation: " + sim.generation);
+        writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", "0","0" , "0", optimum2),sep=','), append=T);
         sim.simulationFinished();
     }
-    P3Inds = p3.individuals;
-    P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
-	 optimum2 = Opt2;
-	 deviations_3 = optimum2 - P3phenotypes;
-    fitnessFunctionMax_3 = dnorm(0.0, 0.0, 5.0); // dnorm(quantiles, mean, sd)
-    adaptation_3 = dnorm(deviations_3, 0.0, 5.0) / fitnessFunctionMax_3; // may not need this. What purpose does adding in the adaptation serve.
-	 QTL_3 =  0.1 + adaptation_3 * 0.9;
-
-	 
-	 P3_ages = P3Inds.age;
-	 //catn(sim.generation + " | P3_ages: " + P3_ages);
-	 //P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
+	P3Inds = p3.individuals;
+	// get the components for selection based on age
+    P3_ages = P3Inds.age;
     P3_mortality = L[P3_ages];
     survival_3 = 1 - P3_mortality;
+   // gather the components for the phenotypic optimum selections regime
+    P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
+    optimum2 = Opt2;
+    p3_heterozygosity = calcHeterozygosity(p3.genomes);
+    // writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
+    deviations_3 = optimum2 - P3phenotypes;
+    fitnessFunctionMax_3 = dnorm(0.0, 0.0, 5.0); // dnorm(quantiles, mean, sd)
+    adaptation_3 = dnorm(deviations_3, 0.0, 5.0) / fitnessFunctionMax_3; // may not need this. What purpose does adding in the adaptation serve.
+	QTL_3 =  0.1 + adaptation_3 * 0.9;
+
+    //catn(sim.generation + " | P3_ages: " + P3_ages);
+    //P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
     P3Inds.fitnessScaling = survival_3 * QTL_3;
     //catn("P3 Ages:" + P3_ages);   
-    
-    P3Inds.tagF = P3phenotypes; // just for output below
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = K / p3.individualCount;
+    P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
 if (sim.generation % 50 == 0){
 //p4_heterozygosity = calcHeterozygosity(p4.genomes);
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
 catn(sim.generation + " | Optimum Phenotype for Re-introduced Population: " + Opt2 + " | Mean phenotype: " + mean(P3phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
-}
-p3_heterozygosity = calcHeterozygosity(p3.genomes);
+// p3_heterozygosity = calcHeterozygosity(p3.genomes;
 writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
-}
+}}
