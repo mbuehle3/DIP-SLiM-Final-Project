@@ -1,3 +1,4 @@
+# run Rscript output-media/slim-graphics.R in the main directory to output all graphs
 setwd("output/")
 dir <- getwd()
 # dir
