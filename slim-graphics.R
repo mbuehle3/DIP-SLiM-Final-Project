@@ -90,16 +90,16 @@ p3.full.rep0.new <- na.omit(p3.full.rep0.new)
 # convert the p3 files from their full name back to just *.csv
 final.p3.rep1 <- matrix(ncol = 1)
 for (i in 1:length(p3.full.rep1.new)){
-  tmp <- strsplit(p3.full.rep1.new[i], split = "/")[[1]]
-  final.p3.rep1[i] <- tmp[9]
+  tmp[i] <- strsplit(p3.full.rep1.new[i], split = "/1/")[[1]][2]
+  final.p3.rep1[i] <- tmp[i]
 }
 # final.p3.rep1
 
 # same as above just for rep0 files
 final.p3.rep0 <- matrix(ncol = 1)
 for (i in 1:length(p3.full.rep0.new)){
-  tmp <- strsplit(p3.full.rep0.new[i], split = "/")[[1]]
-  final.p3.rep0[i] <- tmp[9]
+  tmp[i] <- strsplit(p3.full.rep0.new[i], split = "/0/")[[1]][2]
+  final.p3.rep0[i] <- tmp[i]
 }
 # final.p3.rep0
 
