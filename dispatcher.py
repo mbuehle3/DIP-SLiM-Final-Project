@@ -5,7 +5,7 @@ import time
 reps = 2
 capture = [20,30,40,50,100]
 release = [10,15,20,25,30]
-optimum = [10,20,30,50,100]
+optimum = [10,20,30,50]
 
 shoutit = open("project-dip.csv", "w")
 csv_header = "pop-id, pop-size, hetero., mean phenotype, optimal phenotype\n"

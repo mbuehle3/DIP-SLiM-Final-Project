@@ -6,16 +6,17 @@
 // git commit -m "meaningful message"
 // git push
 
-// Parameters manipulated using Dispatcher.py batch script:
+// Variables we will manipulate::
 //
-// # Individual snakes (M/F) 'captured' from wild population for breeding purposes [20,30,40,50,100]
-// # Individual snakes (M/F) 'released' from OCIC offspring population into reintroduced pop [10,15,20,25,30]
-// Phenotypic optimum for wild pop [10,20,30,50] & Phenotypic optimum for reintroduced pop [-10,-20,-30,-50]
+// sex ratio of introduced snakes
+// Total release number
+// Rate of release
+// Number of source populations 
+// Duration of release
 
-// Output variables to track (in CSV output):
-// Generation #
-// Population ID (P1 and P3)
-// Heterozygosity (Genetic Diversity)
+// Variables to track::
+// Fitness
+// Genetic Diversity
 // Population size
 // Extinction (How often does it happen and when)
 
@@ -23,37 +24,41 @@
 initialize() {
     initializeSLiMModelType("nonWF");
     defineConstant("K", 1000); // carrying capacity for the wild population
+    defineConstant("K2", 40);
     // m1 QTL -> Draws its select coef from norm distrib. w/ mean 0.0 and std dev 1.0
     initializeMutationType("m1", 0.0, "n", 0.0, 1.0); 
     m1.convertToSubstitution = F;
     initializeGenomicElementType("g1", m1, 1.0);
     initializeGenomicElement(g1, 0, 99999);
-    initializeMutationRate(3e-4); //  3e-4 is estimage for the mutation rates for the indigo snake
+    initializeMutationRate(3e-5); //  are  these rates for the indigo snake, or are they from the original script? -C
     initializeRecombinationRate(1e-7);
     initializeSex("A");
-    defineConstant("N1", 500); //initial size of subpop1; Wild Georgia Population 
-    defineConstant("N2", 0); //initial size of subpop2: OCIC breeding colony
-    defineConstant("N3", 0); //initial size of subpop3: Re-introduced population
-    defineConstant("Opt1", optimum); // Phenotypic optimum for Wild Population
+    // defineConstant("buttton", button);
+    // defineConstant("m_12", 1e-4); // migration rate from subpop 1 to subpop 2
+    // defineConstant("m_21", 1e-4); // migration rate from subpop 2 to subpop 1
+    defineConstant("N1", 500); // size of subpop1; wild Georgia Population 
+    defineConstant("N2", 0); //size of subpop2: OCIC breeding colony
+    defineConstant("N3", 0); // size of subpop3: Re-introduced population
+    defineConstant("Opt1", optimum); // Phenotypic optimum
     defineConstant("Opt2", -1*(optimum)); // Phenotypic optimum of the re-introduced population
-    defineConstant("L", c(0.7,0.0,0.0,0.0,0.25,0.5,0.75,1.0)); //Fitness function for each age until death at age 7
-    defineConstant("captured", capture); //parameter constant plugged in from dispatcher.py script
-    defineConstant("released", release); //parameter constant plugged in from dispatcher.py script
-    defineConstant("replicates", replicate); //parameter constant plugged in from dispatcher.py script
+    defineConstant("L", c(0.7,0.0,0.0,0.0,0.25,0.5,0.75,1.0));
+    defineConstant("captured", capture);
+    defineConstant("released", release);
+    defineConstant("replicates", replicate);
 }
 
 // Reproduction mechanics for the original wild p1 population   
 reproduction(p1, "F") {
 	if (individual.age == 3) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 6); // Poisson distribution with mean litter size of 6 offspring for snakes age 3
+		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
 		}
 		else if (individual.age >= 4) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 8); // // Poisson distribution with mean litter size of 8 offspring for snakes age 4+
+		litterSize = rpois(1, 8); // same as above for litter range
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
@@ -64,34 +69,37 @@ reproduction(p1, "F") {
 reproduction(p2, 'F'){
 		// If individual is in p2 and does NOT have breeder ==1 tag (aka offspring), then individual doesn't mate
 		if (individual.age == 3) {
-		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); 
-		    litterSize = rpois(1, 6); 
+		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); // Male must have breeder tag
+		    litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		    for (i in seqLen(litterSize)){
-// P2 OCIC offspring placed in P4 subpop to easily separate breeders & make sure only offspring taken for wild pop	    
-                p4.addCrossed(individual, mate); 
+                p4.addCrossed(individual, mate);
+                // modifyChild() {
+                //     subpop = p4;
+                // };
                 }		}
 		else if ( individual.age >= 4) {
-		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); 
-		    litterSize = rpois(1, 8); 
+		    mate = subpop.sampleIndividuals(1, sex="M", minAge=3); // Male must have breeder tag
+		    litterSize = rpois(1, 8); // same as above for litter range
 		    for (i in seqLen(litterSize)){
             p4.addCrossed(individual, mate);
-
+            // modifyChild(){
+            //     subpop = p4;
+            // };
                 }
 	}
 }
-
-// Reproduction mechanics for the Reintroduced P3 population		
+		
 reproduction(p3, "F") {
 	if (individual.age == 3) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 6); 
+		litterSize = rpois(1, 6); // not sure how to add litter range of 6-12 to prevent litters smaller than 6
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
 		}
 		else if (individual.age >= 4) {
 		mate = subpop.sampleIndividuals(1, sex="M");
-		litterSize = rpois(1, 8); 
+		litterSize = rpois(1, 8); // same as above for litter range
 		for (i in seqLen(litterSize)){
             subpop.addCrossed(individual, mate);
         }
@@ -114,30 +122,50 @@ reproduction(p3, "F") {
 fitness(m1,p1) {return 1.0;}
 
 1:5000 {
+    // catn("Calculating phenotypes for the wild population");
+    // catn(sim.generation);
     P1Inds = p1.individuals;
     P1Phenotypes = P1Inds.sumOfMutationsOfType(m1);
     Optimum_1 = Opt1;
     deviations_1 = Optimum_1 - P1Phenotypes;
     fitnessFunctionMax_1 = dnorm(0.0, 0.0, 1.0);
-    adaptation_1 = dnorm(deviations_1, 0.0, 1.0) / fitnessFunctionMax_1;
+    adaptation_1 = dnorm(deviations_1, 0.0, 1.0) / fitnessFunctionMax_1; // need to figure out why this is returning a whole list of values and not just a singleton 
     QTL_1 =  0.1 + adaptation_1 * 0.9;
+
+
     // Do some selection based on life stage mortalities
     ages = P1Inds.age;
-    p1_heterozygosity = calcHeterozygosity(p1.genomes); //Calculates heterozygosity for P1 individuals
+    p1_heterozygosity = calcHeterozygosity(p1.genomes);
     if (sim.generation % 50 == 0){
     	catn(sim.generation + " | Mean Age: " + mean(ages) + " | Oldest Age:" + max(ages) + " | Optimum Phenotype is: " + Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + p1.individualCount + " | Wild Pop Mean Heterozygosity: " + p1_heterozygosity + " | Wild Population Size: " + p1.individualCount + "\n");
 }
     mortality = L[ages];
+    // catn(L[ages]);
     survival = 1 - mortality;
     P1Inds.fitnessScaling = survival * QTL_1;
     P1Inds[ages >= 8].fitnessScaling = 0.0; 
 
     p1.fitnessScaling = (K / (p1.individualCount));
     if (sim.generation % 100 == 0 ) {
-    //catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
+    // catn(sim.generation + " : " + mean(ages) + " :" + max(ages) + ": " + p1.individualCount);
     }
     writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p1-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p1", p1.individualCount , mean(p1_heterozygosity), mean(P1Phenotypes), Optimum_1),sep=','), append=T);
 }
+
+
+// Doing some selection based on their QTLs
+
+    // P1Inds.fitnessScaling = K / p1.individualCount;
+     
+    // catn(adaptation + "\n");
+    // P1Individuals.fitnessScaling = 0.1 + adaptation * 0.9;
+    // P1Individuals.fitnessScaling = K / p1.individualCount;
+    // // Print mean heterozygosity across the population
+	//  p1_heterozygosity = calcHeterozygosity(p1.genomes);
+    // if (sim.generation % 100 == 0){
+    //     cat("Wild Population Mean Heterozygosity = " + p1_heterozygosity + "\n");
+    //     catn("\n"+ sim.generation + ": Optimum Phenotype: "+ Opt1 + " | Mean phenotype of wild population: " + mean(P1Phenotypes) + "\nWild Population Size: " + p1.individualCount);
+    // }
 
     // if ((sim.generation-1) % 100 == 0) {
     // catn("Generation: " + sim.generation + " Abundance: " + p1.individualCount + " Phenotypic Mean: " + mean(P1Phenotypes) + "\n");
@@ -160,15 +188,18 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 
 5000 late() {    
     catn("Taking individuals to seed the OCIC Breeding colony");
-    N1Migrants = captured; //The # of migrants is a parameter input from the dispatcher.py script
+    N1Migrants = captured; // May need to change the migrant p's to n's if doesn't track
+    // p2.Individuals = sum(p2.individualCount);
     FemaleN1Migrations = p1.sampleIndividuals(N1Migrants, sex = "F", minAge = 3);
+    // FemaleN1Migrations.tag = 1;
     catn("Gathered females");
     MaleN1Migrations = p1.sampleIndividuals(N1Migrants, sex = "M", minAge = 3);
+    // MaleN1Migrations.tag = 1;
     catn("Gathered males");
-    p2.takeMigrants(c(FemaleN1Migrations, MaleN1Migrations)); //Takes migrants from wild p1 and puts into OCIC p2
+    p2.takeMigrants(c(FemaleN1Migrations, MaleN1Migrations)); //Takes migrants from p1 and puts into p2
     p2.individuals.tag = 1;
     catn(p2.individualCount + "\n");
-    p1.fitnessScaling = 0; // Kill of the wild p1 population to save on computation.
+    p1.fitnessScaling = 0;
 }
 
 
@@ -178,25 +209,42 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
 }    
 
 
-// Reproduction of P2 OCIC breeder population to create P4 offspring population to be used for reintroduction
+// something messy is going on here that is bogging down the script
 5000:5032 {
     // catn("Starting to breed snakes");
     // catn("Population of the OCIC Breeding colony: " + p2.individualCount);
     P4Phenotype = p4.individuals.sumOfMutationsOfType(m1);
+    // p2.fitnessScaling = K2 / p2.individualCount;
+    // catn(sim.generation + ": OCIC colony size = " + p2.individualCount + ": Mean phenotype at the OCIC: " + mean(P2Phenotype));
+        // if (sim.generation % 100 == 0){
+        // catn(sim.generation + ": OCIC Mean phenotype == " + mean(P2Phenotypes) + " OCIC Population Size: " + p2.individualCount);
+    // p4.fitnessScaling = K2 / p4.individualCount;
     catn(sim.generation + ": OCIC Offspring Population Size: " + p4.individualCount + " | OCIC Offspring Mean Phenotype: " + mean(P4Phenotype));
+        // writeFile("project-dip.csv", paste(c(,"1"),sep=','), append=T);
+
 }
+
+// }
+    
+// should add in some way to separate the breeders from the offspring so we only pull from offspring 
+// should explore maintaining some sort of sex ratio for the migration rate, we can pull this from the n3 migration
 
 5010 {
-    sim.addSubpop("p3", N3); // Create empty reintroduced P3 subpopulation
+    sim.addSubpop("p3", N3);
 }
 
 
-// Set up the re-introduced population
+// // Set up the re-introduced population
+// fitness(m2) { return 1.0; }
+
+
+
 
 5011:5021 early() {
-// This block will remove specified number of snakes in the dispatcher.py script (i.e. 15 males and 15 females) from the OCIC population and migrate them into P3 (reintroduced population)
+// This block will remove 15 males and 15 females from the OCIC population and migrate them into p3
 	 	
 	P2Migrants= released;
+    // p2.Individuals = sum(p2.individualCount);
     FemaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "F");
     MaleP2Migrants = p4.sampleIndividuals(P2Migrants, sex = "M");
     p3.takeMigrants(c(FemaleP2Migrants, MaleP2Migrants));
@@ -204,14 +252,17 @@ fitness(m1,p2) {return 1.0;} // Reset fitness function for the OCIC p2 subpop.
     
     P4Inds = p4.individuals;
 	P4_ages = P4Inds.age;
-    P4Inds[P4_ages >= 7].fitnessScaling = 0.0; // Killing any snakes above age 7
+    P4Inds[P4_ages >= 7].fitnessScaling = 0.0;
     }
 
 fitness(m1,p3) {return 1.0;}
 
-// Reproduction of reintroduced  P3 population. Checking for diversity and extinction, tracking outputs.
 5011:5600 {
-	// If population is extinct:
+
+//     p4_heterozygosity = calcHeterozygosity(p4.genomes);
+// //     if (sim.generation % 50 == 0) {
+//     	catn(sim.generation + " | OCIC Offspring Mean Heterozygosity: " + p4_heterozygosity);
+// }
     if (p3.individualCount == 0) {
         catn("Population went extinct at generation: " + sim.generation);
         writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", "0","0" , "0", optimum2),sep=','), append=T);
@@ -226,19 +277,23 @@ fitness(m1,p3) {return 1.0;}
     P3phenotypes = P3Inds.sumOfMutationsOfType(m1);
     optimum2 = Opt2;
     p3_heterozygosity = calcHeterozygosity(p3.genomes);
+    // writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
     deviations_3 = optimum2 - P3phenotypes;
     fitnessFunctionMax_3 = dnorm(0.0, 0.0, 5.0); // dnorm(quantiles, mean, sd)
-    adaptation_3 = dnorm(deviations_3, 0.0, 5.0) / fitnessFunctionMax_3;
+    adaptation_3 = dnorm(deviations_3, 0.0, 5.0) / fitnessFunctionMax_3; // may not need this. What purpose does adding in the adaptation serve.
 	QTL_3 =  0.1 + adaptation_3 * 0.9;
+
     //catn(sim.generation + " | P3_ages: " + P3_ages);
-    P3Inds.fitnessScaling = survival_3 * QTL_3;   
+    //P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
+    P3Inds.fitnessScaling = survival_3 * QTL_3;
+    //catn("P3 Ages:" + P3_ages);   
     // density-dependence with a maximum benefit at low density
     p3.fitnessScaling = K / p3.individualCount;
     P3Inds[P3_ages >= 7].fitnessScaling = 0.0;
 if (sim.generation % 50 == 0){
-
+//p4_heterozygosity = calcHeterozygosity(p4.genomes);
 p3_heterozygosity = calcHeterozygosity(p3.genomes);
 catn(sim.generation + " | Optimum Phenotype for Re-introduced Population: " + Opt2 + " | Mean phenotype: " + mean(P3phenotypes) + "\n" + "Reintroduced Population Size: " + p3.individualCount + " | Reintroduced Population Mean Heterozygosity: " + p3_heterozygosity + "\n");
-
+// p3_heterozygosity = calcHeterozygosity(p3.genomes;
 writeFile(paste(c("output/",replicates,"/",captured,"-",released,"-",Opt1,"-p3-results.csv"), sep = ""), paste(c(replicates,sim.generation, "p3", p3.individualCount , mean(p3_heterozygosity), mean(P3phenotypes), optimum2),sep=','), append=T);
 }}

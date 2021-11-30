@@ -45,14 +45,14 @@ for (file in 1:length(p1.files)) {
     # p1.data
     jpeg(paste("../output-media/",p1.data.root,".jpg",sep = ""))
     par(mfrow=c(3,1))
-    plot(mean.phenotype~gen, data = rep0.data , type = "l", lwd =2.5, col = "blue", ylim = c((min(mean.phenotype)-5), (max(mean.phenotype)+5)))
-    lines(mean.phenotype~gen, data = rep1.data, lwd= 2.5, col = "red", ylim = c((min(mean.phenotype)-5), (max(mean.phenotype)+5)))
+    plot(mean.phenotype~gen, data = rep0.data , type = "l", lwd =2.5, col = "blue", ylim = c((min(mean.phenotype)-10), (max(mean.phenotype)+10)))
+    lines(mean.phenotype~gen, data = rep1.data, lwd= 2.5, col = "red", ylim = c((min(mean.phenotype)-10), (max(mean.phenotype)+10)))
     # abline (h = 10, col = "red", cex = 2.5)
     title(p1.data.root, cex.main = 3.5)
     plot(hetero~gen, data = rep0.data, type = "l", lwd = 2.5, col = "green", ylim = c(0, max(hetero)+0.0001))
     lines(hetero~gen, data = rep1.data, lwd= 2.5, col = "red" , ylim = c(0, max(hetero)))
-    plot(pop.size~gen,data = rep0.data, type = "l", cex = 2.5, col = "purple", ylim = c(0, max(pop.size)))
-    lines(pop.size~gen, data = rep1.data, lwd= 2.5, col = "red", ylim = c(0, max(pop.size)))
+    plot(pop.size~gen,data = rep0.data, type = "l", cex = 2.5, col = "purple", ylim = c(0, max(pop.size)+100))
+    lines(pop.size~gen, data = rep1.data, lwd= 2.5, col = "red", ylim = c(0, max(pop.size)+100))
     
     dev.off()
 }
@@ -90,16 +90,18 @@ p3.full.rep0.new <- na.omit(p3.full.rep0.new)
 # convert the p3 files from their full name back to just *.csv
 final.p3.rep1 <- matrix(ncol = 1)
 for (i in 1:length(p3.full.rep1.new)){
-  tmp[i] <- strsplit(p3.full.rep1.new[i], split = "/1/")[[1]][2]
-  final.p3.rep1[i] <- tmp[i]
+  #tmp[i] <- strsplit(p3.full.rep1.new[i], split = "/1/")[[1]][2]
+  tmp <- strsplit(p3.full.rep1.new[i], split = "/1/")[[1]][2]
+  final.p3.rep1[i] <- tmp #tmp[i]
 }
 # final.p3.rep1
 
 # same as above just for rep0 files
 final.p3.rep0 <- matrix(ncol = 1)
 for (i in 1:length(p3.full.rep0.new)){
-  tmp[i] <- strsplit(p3.full.rep0.new[i], split = "/0/")[[1]][2]
-  final.p3.rep0[i] <- tmp[i]
+  #tmp[i] <- strsplit(p3.full.rep0.new[i], split = "/0/")[[1]][2]
+  tmp <- strsplit(p3.full.rep0.new[i], split = "/0/")[[1]][2]
+  final.p3.rep0[i] <- tmp #tmp[i]
 }
 # final.p3.rep0
 
@@ -111,22 +113,26 @@ for (file in 1:length(final.p3.rep0)) {
     rep.1 = final.p3.rep1[file]
     print(rep.0)
     print(rep.1)
-    rep0.data <- read.csv(paste(dir,"/0/",rep.0,sep = ""), header = TRUE)
-    rep1.data <- read.csv(paste(dir,"/1/",rep.1,sep = ""), header = TRUE)
-    p3.data.root <- tools::file_path_sans_ext(rep.0)
-    p3.data.root
-    # p1.data.root
-    # p1.data
-    jpeg(paste("../output-media/",p3.data.root,".jpg",sep = ""))
-    par(mfrow=c(3,1))
-    plot(mean.phenotype~gen, data = rep0.data , type = "l", lwd = 2.5, col = "blue", ylim=c((min(mean.phenotype)-2), (max(mean.phenotype)+2)))
-    lines(mean.phenotype~gen, data = rep1.data, lwd= 2.5, col = "red", ylim=c(min(mean.phenotype), max(mean.phenotype)))
-    # abline (h = 10, col = "red", cex = 2.5)
-    title(p3.data.root, cex.main = 4)
-    plot(hetero~gen, data = rep0.data, type = "l", lwd = 2.5, col = "green", ylim=c(0, max(hetero)+0.0001))
-    lines(hetero~gen, data = rep1.data, lwd= 2.5, col = "red", ylim=c(0, max(hetero)))
-    plot(pop.size~gen,data = rep0.data, type = "l", lwd = 2.5, col = "purple", ylim = c(0, max(pop.size)))
-    lines(pop.size~gen, data = rep1.data, lwd= 2.5, col = "red", ylim = c(0, max(pop.size)))
-   
-    dev.off()
+    if (is.na(rep.0)  || is.na(rep.1)){
+        print('Yuck!')
+    } else {
+        rep0.data <- read.csv(paste(dir,"/0/",rep.0,sep = ""), header = TRUE)
+        rep1.data <- read.csv(paste(dir,"/1/",rep.1,sep = ""), header = TRUE)
+        p3.data.root <- tools::file_path_sans_ext(rep.0)
+        p3.data.root
+        # p1.data.root
+        # p1.data
+        jpeg(paste("../output-media/",p3.data.root,".jpg",sep = ""))
+        par(mfrow=c(3,1))
+        plot(mean.phenotype~gen, data = rep0.data , type = "l", lwd = 2.5, col = "blue", ylim=c((min(mean.phenotype)-10), (max(mean.phenotype)+10)))
+        lines(mean.phenotype~gen, data = rep1.data, lwd= 2.5, col = "red", ylim=c((min(mean.phenotype)+10), (max(mean.phenotype)+10)))
+        # abline (h = 10, col = "red", cex = 2.5)
+        title(p3.data.root, cex.main = 4)
+        plot(hetero~gen, data = rep0.data, type = "l", lwd = 2.5, col = "green", ylim=c(0, max(hetero)+0.0001))
+        lines(hetero~gen, data = rep1.data, lwd= 2.5, col = "red", ylim=c(0, max(hetero)))
+        plot(pop.size~gen,data = rep0.data, type = "l", lwd = 2.5, col = "purple", ylim = c(0, max(pop.size)+100))
+        lines(pop.size~gen, data = rep1.data, lwd= 2.5, col = "red", ylim = c(0, max(pop.size)+100))
+       
+        dev.off()
+    }
 }
